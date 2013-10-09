@@ -1,0 +1,4 @@
+haiku
+=====
+
+Minimalistic slideshow template
