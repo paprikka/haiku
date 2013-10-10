@@ -1,0 +1,28 @@
+.top-nav{
+  background-color: $gray-lightest; 
+  padding: 20px;
+  color: $gray;
+  font-size: 18px;
+}
+
+
+.top-nav__content{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  position: relative;
+
+}
+
+%top-nav__item{
+  display: inline-block;
+}
+
+.top-nav__link{
+  @extend %top-nav__item;
+}
+
+.top-nav__brand{
+
+}

@@ -1,0 +1,19 @@
+.ppk-drop{
+}
+.ppk-drop__box{
+  min-height:       300px;
+  width:            100%;
+  position:         relative;
+  background-color: $gray-lightest;
+  border-radius:    10px;
+
+
+  &:hover{
+
+  }
+
+  &.is-file-over{
+    background-color: transparentize($green, .7);
+
+  }
+}

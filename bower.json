@@ -1,0 +1,23 @@
+{
+  "name": "skeletor-components",
+  "author": "Rafal Pastuszak <rafal@paprikka.pl>",
+  "description": "Set of default components for Skeletor web app template",
+  "version": "0.1.0",
+  "main": [],
+  "dependencies": {
+    "console-polyfill": "*",
+    "jquery": "1.9.1",
+    "angular": "1.0.7",
+    "angular-sanitize": "1.0.7",
+    "angular-resource": "1.0.7",
+    "angular-cookies": "1.0.7",
+    "angular-mocks": "1.0.7",
+    "lodash": "~1.2.1",
+    "json3": "~3.2.4",
+    "es5-shim": "~2.0.11",
+    "inuit.css": "~5.0.0"
+  },
+  "devDependencies": {
+    "animate.css": "~2.1.0"
+  }
+}

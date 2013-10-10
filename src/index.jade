@@ -1,0 +1,24 @@
+!!! 5
+//if lt IE 7
+    <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
+//if IE 7
+    <html class="no-js lt-ie9 lt-ie8" lang="en">
+//if IE 8
+    <html class="no-js lt-ie9" lang="en">
+<!--[if gt IE 8]><!-->
+html(class="no-js", lang="en")
+  // <![endif]
+
+  include head
+  body(ng-controller='AppCtrl', ng-app="app", id="ng-app")
+    .viewport
+      //- .viewport__header
+        .top-nav
+          ul.top-nav__content
+            li.top-nav__brand Foo
+            li.top-nav__link Foo
+            li.top-nav__link Bar
+            li.top-nav__link Baz
+
+
+      .viewport__content(ng-view)

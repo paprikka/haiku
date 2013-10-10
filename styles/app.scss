@@ -1,0 +1,32 @@
+@import "compass/css3";
+
+@import "config";      // configuration variables for inuit, called overrides in similar projects
+@import "colors";      // basic color palette
+@import "typography";  // sizes, scales, webfonts
+@import "ui/icons";    // not typography per se (despite of the fact that they use fonts internally)
+
+// Vendor imports
+
+
+@import 'CSS:../vendor/animate.css/animate';
+@import '../vendor/inuit.css/inuit'; 
+
+// Custom components
+@import "ui/h";
+@import "ui/buttons";
+
+
+*, *::after, *::before{
+  box-sizing: border-box;
+}
+ 
+body{
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: $font-family-body;
+  background: url(http://cdn2.dribbble.com/assets/noise-f1-99be850299aaf3f1e91225fa7a97228c.gif);
+}
+
+.viewport{
+  padding: 30px;
+}
