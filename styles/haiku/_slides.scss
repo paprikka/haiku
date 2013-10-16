@@ -1,0 +1,29 @@
+.haiku__slides { 
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.haiku__slide { 
+  @extend %haiku__container;
+  opacity: 1;
+  padding: 20px;
+  transition: $haiku-duration all $haiku-easing;
+
+  font-weight: 100;
+  color: $white;
+  font-size: 128px;
+  color: rgba(255,255,255,.7);
+  @include transform(translate3d(0,0,0));
+}
+
+.haiku__slide--current{
+}
+.haiku__slide--next{
+  @include transform(translate3d(0,100%,0));
+}
+
+.haiku__slide--prev{
+  @include transform(translate3d(0,-100%,0));
+}
+

@@ -1,0 +1,67 @@
+.haiku-nav {
+  position: fixed;
+  text-align: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+}
+
+.haiku-nav__categories {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.haiku-nav__category {
+  display: inline-block;
+}
+
+.haiku-nav__category-content {
+
+}
+
+.haiku-nav__slides {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+}
+
+.haiku-nav__slide {
+  display: block;
+  padding: 0 10px;
+}
+
+.haiku-nav__button {
+  vertical-align:   middle;
+  $w:               14px;
+  border:           none;
+  border-radius:    $w;
+  width:            $w;
+  height:           $w;
+  padding:          0;
+  border:           2px solid transparentize($white, .7);
+  background-color: transparent;
+  opacity:          .8;
+  @include transition(.4s all);
+
+  &:focus{
+    -webkit-outline: none;
+    outline: none;
+  }
+
+  &:active{
+    box-shadow: 0 0 10px 40px transparentize($white, .5);
+  }
+
+}
+
+.haiku-nav__button--active{
+  background-color: transparentize($white, .5);
+  border: none transparent;
+  // box-shadow: 0 0 0 5px transparentize($white, .7);
+}

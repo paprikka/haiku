@@ -132,6 +132,7 @@ module.exports = (grunt)->
     connect:
       server:
         options:
+          hostname: '*'
           port: 8081
           base: 'public'
           keepalive: yes
@@ -139,6 +140,7 @@ module.exports = (grunt)->
 
       livereload:
         options:
+          hostname: '*'
           port: 8081
           base: 'public'
 

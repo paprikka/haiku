@@ -1,3 +1,14 @@
 .haiku
   ol.haiku__categories
-    li.haiku__category hello
+    li.haiku__category(ng-repeat="category in categories", ng-class="getCategoryClass(category)")
+      .haiku__category-content
+        ol.haiku__slides(ng-show="category.slides.length")
+          li.haiku__slide(ng-repeat="slide in category.slides", ng-style="getSlideStyle(slide)", ng-class="getSlideClass(slide)")
+            | {{ slide.index }} : {{ slide.categoryIndex }}
+  .haiku-nav
+    ol.haiku-nav__categories
+      li.haiku-nav__category(ng-repeat="category in categories", ng-class="{ 'haiku-nav__category--current' : currentCategory == slide.categoryIndex }")
+        .haiku-nav__category-content
+          ol.haiku-nav__slides
+            li.haiku-nav__slide(ng-repeat="slide in category.slides")
+              button.haiku-nav__button(ng-class="{'haiku-nav__button--active': isCurrentSlide(slide)}", h-tap="goto(slide)")

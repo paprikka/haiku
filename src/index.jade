@@ -22,3 +22,8 @@ html(class="no-js", lang="en")
 
 
       .viewport__content(ng-view)
+
+    script
+      $('body').on('touchmove', function (e) {
+         if (!$('.scrollable').has($(e.target)).length) e.preventDefault();
+      });

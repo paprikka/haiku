@@ -1,0 +1,28 @@
+@import "compass/css3";
+
+
+
+
+
+$haiku-easing: cubic-bezier(.1, .7, .1, 1);
+$haiku-duration: .5s;
+
+%haiku__container{
+  position: absolute;
+  top:      0;
+  left:     0;
+  right:    0;
+  bottom:   0;
+
+}
+.haiku {
+  @extend %haiku__container;
+  &, *{
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+}
+
+@import "haiku/categories";
+@import "haiku/slides";
+@import "haiku/nav";
+
