@@ -66,17 +66,25 @@ angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slid
         };
         scope.$watch('currentCategory', scope.updatePosition);
         scope.$watch('currentSlide', scope.updatePosition);
-        Hammer(elm).on('swipeleft', function() {
-          return scope.$apply(scope.nextCategory);
+        Hammer(elm).on('swipeleft', function(e) {
+          e.gesture.srcEvent.preventDefault();
+          scope.$apply(scope.nextCategory);
+          return false;
         });
-        Hammer(elm).on('swiperight', function() {
-          return scope.$apply(scope.prevCategory);
+        Hammer(elm).on('swiperight', function(e) {
+          e.gesture.srcEvent.preventDefault();
+          scope.$apply(scope.prevCategory);
+          return false;
         });
-        Hammer(elm).on('swipeup', function() {
-          return scope.$apply(scope.nextSlide);
+        Hammer(elm).on('swipeup', function(e) {
+          e.gesture.srcEvent.preventDefault();
+          scope.$apply(scope.nextSlide);
+          return false;
         });
-        Hammer(elm).on('swipedown', function() {
-          return scope.$apply(scope.prevSlide);
+        Hammer(elm).on('swipedown', function(e) {
+          e.gesture.srcEvent.preventDefault();
+          scope.$apply(scope.prevSlide);
+          return false;
         });
         onKeyDown = function(e) {
           if (!scope.$$phase) {

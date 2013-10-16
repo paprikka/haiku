@@ -77,10 +77,26 @@ angular.module('pl.paprikka.directives.haiku', [
       scope.$watch 'currentSlide', scope.updatePosition      
 
 
-      Hammer(elm).on 'swipeleft',  -> scope.$apply scope.nextCategory
-      Hammer(elm).on 'swiperight', -> scope.$apply scope.prevCategory
-      Hammer(elm).on 'swipeup',    -> scope.$apply scope.nextSlide
-      Hammer(elm).on 'swipedown',  -> scope.$apply scope.prevSlide
+      Hammer(elm).on 'swipeleft',  (e)-> 
+        e.gesture.srcEvent.preventDefault();
+        scope.$apply scope.nextCategory
+        off
+
+      Hammer(elm).on 'swiperight', (e)-> 
+        e.gesture.srcEvent.preventDefault();
+        scope.$apply scope.prevCategory
+        off
+
+      Hammer(elm).on 'swipeup',    (e)-> 
+        e.gesture.srcEvent.preventDefault();
+        scope.$apply scope.nextSlide
+        off
+
+      Hammer(elm).on 'swipedown',  (e)-> 
+        e.gesture.srcEvent.preventDefault();
+        scope.$apply scope.prevSlide
+        off
+
 
       onKeyDown = (e) ->
         unless scope.$$phase then scope.$apply ->
