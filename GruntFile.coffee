@@ -191,6 +191,9 @@ module.exports = (grunt)->
   grunt.registerTask 'coverage', ['clean:testScripts', 'html2js:main', 'coffee:compileForTests', 'coffee:compileTests']
 
   grunt.registerTask 'default', [ 'connect:livereload', 'watch']
+  
+  grunt.registerTask 'init', [ 'buildTemplates', 'buildStyles', 'copy:assets', 'concat:vendorScripts'  ]
+
   # TODO: add new tasks
   # TODO: create INIT / Bootstrap task
   # grunt.registerTask 'base', ['clean:public', 'coffee', 'jade', 'compass']

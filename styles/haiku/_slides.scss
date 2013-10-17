@@ -18,6 +18,7 @@
 }
 
 .haiku__slide--current{
+  transition-duration: $haiku-duration * .5;
 }
 .haiku__slide--next{
   @include transform(translate3d(0,100%,0));
