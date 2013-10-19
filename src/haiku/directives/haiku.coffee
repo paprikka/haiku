@@ -1,6 +1,7 @@
 angular.module('pl.paprikka.directives.haiku', [ 
   'pl.paprikka.services.haiku.slides' 
   'pl.paprikka.services.hammerjs' 
+  'pl.paprikka.haiku.services.remote' 
   'pl.paprikka.directives.haiku.hTap'
   'ngSanitize'
 
@@ -9,8 +10,10 @@ angular.module('pl.paprikka.directives.haiku', [
   '$window'
   'Slides'
   'Hammer'
+  'Remote'
+  '$rootScope'
 
-  ( $window, Slides )->
+  ( $window, Slides, Hammer, Remote, $rootScope )->
     templateUrl: 'haiku/partials/haiku.html'
     restrict: 'AE'
     link: ( scope, elm, attrs )->
@@ -120,16 +123,27 @@ angular.module('pl.paprikka.directives.haiku', [
 
       
       onMouseWheel = (e) ->
-        if e.delta < -3
-          scope.nextSlide()
-        if e.delta > 3
-          scope.prevSlide()
+        delta = e.originalEvent.wheelDelta
+        treshold = 100
+        scope.$apply ->
+          if delta < -treshold
+            scope.nextSlide()
+          if delta > treshold
+            scope.prevSlide()
       
       
 
       $($window).on 'keydown', onKeyDown
       $($window).on 'mousewheel', onMouseWheel
 
+      $rootScope.$on 'remote:control', (e, data) ->
+        scope.$apply ->
+          switch data.params.direction
+            when 'up'    then scope.prevSlide()
+            when 'down'  then scope.nextSlide()
+            when 'left'  then scope.prevCategory()
+            when 'right' then scope.nextCategory()
+      
 
 
       scope.getCategoryClass = (category) ->

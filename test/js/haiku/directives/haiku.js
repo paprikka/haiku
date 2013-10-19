@@ -1,5 +1,5 @@
-angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slides', 'pl.paprikka.services.hammerjs', 'pl.paprikka.directives.haiku.hTap', 'ngSanitize']).directive('haiku', [
-  '$window', 'Slides', 'Hammer', function($window, Slides) {
+angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slides', 'pl.paprikka.services.hammerjs', 'pl.paprikka.haiku.services.remote', 'pl.paprikka.directives.haiku.hTap', 'ngSanitize']).directive('haiku', [
+  '$window', 'Slides', 'Hammer', 'Remote', '$rootScope', function($window, Slides, Hammer, Remote, $rootScope) {
     return {
       templateUrl: 'haiku/partials/haiku.html',
       restrict: 'AE',
@@ -112,15 +112,34 @@ angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slid
           }
         };
         onMouseWheel = function(e) {
-          if (e.delta < -3) {
-            scope.nextSlide();
-          }
-          if (e.delta > 3) {
-            return scope.prevSlide();
-          }
+          var delta, treshold;
+          delta = e.originalEvent.wheelDelta;
+          treshold = 100;
+          return scope.$apply(function() {
+            if (delta < -treshold) {
+              scope.nextSlide();
+            }
+            if (delta > treshold) {
+              return scope.prevSlide();
+            }
+          });
         };
         $($window).on('keydown', onKeyDown);
         $($window).on('mousewheel', onMouseWheel);
+        $rootScope.$on('remote:control', function(e, data) {
+          return scope.$apply(function() {
+            switch (data.params.direction) {
+              case 'up':
+                return scope.prevSlide();
+              case 'down':
+                return scope.nextSlide();
+              case 'left':
+                return scope.prevCategory();
+              case 'right':
+                return scope.nextCategory();
+            }
+          });
+        });
         scope.getCategoryClass = function(category) {
           return 'haiku__category--' + (category.status || 'prev');
         };

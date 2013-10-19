@@ -134,7 +134,7 @@ module.exports = (grunt)->
         options:
           hostname: '*'
           port: 8081
-          base: 'public'
+          # base: 'public'
           keepalive: yes
 
 
@@ -142,7 +142,7 @@ module.exports = (grunt)->
         options:
           hostname: '*'
           port: 8081
-          base: 'public'
+          # base: 'public'
 
     copy:
       assets:
