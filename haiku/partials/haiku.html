@@ -1,0 +1,32 @@
+
+<div ng-class="getThemeClass()" class="haiku">
+  <div ng-show="!categories.length">
+    <ppk-drop on-drop="onFileDropped(markdownContent)" files="files"></ppk-drop>
+  </div>
+  <div ng-show="categories.length">
+    <ol class="haiku__categories">
+      <li ng-repeat="category in categories" ng-class="getCategoryClass(category)" class="haiku__category">
+        <div class="haiku__category-content">
+          <ol ng-show="category.slides.length" class="haiku__slides">
+            <li ng-repeat="slide in category.slides" ng-style="getSlideStyle(slide)" ng-class="getSlideClass(slide)" class="haiku__slide">
+              <section ng-bind-html="slide.body"></section>
+            </li>
+          </ol>
+        </div>
+      </li>
+    </ol>
+    <div class="haiku-nav">
+      <ol class="haiku-nav__categories">
+        <li ng-repeat="category in categories" ng-class="{ 'haiku-nav__category--current' : currentCategory == slide.categoryIndex }" class="haiku-nav__category">
+          <div class="haiku-nav__category-content">
+            <ol class="haiku-nav__slides">
+              <li ng-repeat="slide in category.slides" class="haiku-nav__slide">
+                <button ng-class="{'haiku-nav__button--active': isCurrentSlide(slide)}" h-tap="goto(slide)" class="haiku-nav__button"></button>
+              </li>
+            </ol>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
