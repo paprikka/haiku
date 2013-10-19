@@ -2,6 +2,8 @@ angular.module('pl.paprikka.directives.haiku', [
   'pl.paprikka.services.haiku.slides' 
   'pl.paprikka.services.hammerjs' 
   'pl.paprikka.directives.haiku.hTap'
+  'ngSanitize'
+
   ]).directive('haiku', [
 
   '$window'
@@ -15,14 +17,21 @@ angular.module('pl.paprikka.directives.haiku', [
 
       scope.categories = Slides.get()
 
-      scope.currentCategory   = 0
-      scope.currentSlide      = 0
+      initSettings = (scope)->
+        scope.currentCategory   = 0
+        scope.currentSlide      = 0
 
-      scope.isLastCategory    = no
-      scope.isLastSlide       = no
+        scope.isLastCategory    = no
+        scope.isLastSlide       = no
 
-      scope.isFirstCategory   = no
-      scope.isFirstSlide      = no
+        scope.isFirstCategory   = no
+        scope.isFirstSlide      = no
+        
+      initSettings scope
+
+      scope.$watch 'categories.length', (n,o) ->
+        return unless n isnt o
+        initSettings scope
 
       scope.updatePosition = ->
         console.log "#{scope.currentCategory} #{scope.currentSlide}"
@@ -105,12 +114,23 @@ angular.module('pl.paprikka.directives.haiku', [
             when 38 then scope.prevSlide()
             when 39 then scope.nextCategory()
             when 40 then scope.nextSlide()
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        no
+        # e.preventDefault()
+        # e.stopImmediatePropagation()
+        # no
 
       
+      onMouseWheel = (e) ->
+        if e.delta < -3
+          scope.nextSlide()
+        if e.delta > 3
+          scope.prevSlide()
+      
+      
+
       $($window).on 'keydown', onKeyDown
+      $($window).on 'mousewheel', onMouseWheel
+
+
 
       scope.getCategoryClass = (category) ->
         'haiku__category--' + (category.status or 'prev')
@@ -121,7 +141,8 @@ angular.module('pl.paprikka.directives.haiku', [
       
 
       scope.getSlideStyle = (slide)->
-        'background-color' : slide.background or '#333'
+        'background' : slide.background or '#333'
+        'background-size': 'cover'
 
       scope.isCurrentSlide = (slide) ->
         slide.index is scope.currentSlide and slide.categoryIndex is scope.currentCategory
@@ -131,8 +152,14 @@ angular.module('pl.paprikka.directives.haiku', [
         scope.currentSlide    = slide.index
 
 
+      # TODO: extend theming support
+      scope.getThemeClass = -> 'haiku--default'
 
-      
+      scope.files = []
+      scope.onFileDropped = (markdownContent)->
+        _.defer -> scope.$apply ->
+          scope.categories = Slides.getFromMarkdown markdownContent
+          scope.updatePosition()
 
      # TODO: move to a subdirective     
      

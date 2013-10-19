@@ -1,24 +1,6 @@
 @import "icon-config";
 
-/* Use the following CSS code if you want to use data attributes for inserting your icons */
-[data-icon]:before {
-  font-family: 'icomoon';
-  content: attr(data-icon);
-  speak: none;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Use the following CSS code if you want to have a class per icon */
-/*
-Instead of a list of all class selectors,
-you can use the generic selector below, but it's slower:
 [class*="icon-"] {
-*/
-.icon-quill, .icon-pen, .icon-image, .icon-tag, .icon-close, .icon-checkmark, .icon-cog, .icon-users, .icon-quotes-left, .icon-phone, .icon-envelop, .icon-wrench, .icon-arrow-right, .icon-satellite, .icon-heart, .icon-star, .icon-box, .icon-cube, .icon-batman, .icon-space-invaders, .icon-3d-glasses {
   font-family: 'icomoon';
   speak: none;
   font-style: normal;
@@ -26,68 +8,27 @@ you can use the generic selector below, but it's slower:
   font-variant: normal;
   text-transform: none;
   line-height: 1;
+
+  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.icon-quill:before {
-  content: "\e004";
+
+.icon-arrow-down:before {
+  content: "\e600";
 }
-.icon-pen:before {
-  content: "\e005";
+.icon-download:before {
+  content: "\e601";
 }
-.icon-image:before {
-  content: "\e006";
+.icon-cloud-download:before {
+  content: "\e602";
 }
-.icon-tag:before {
-  content: "\e007";
+.icon-upload:before {
+  content: "\e603";
 }
-.icon-close:before {
-  content: "\e008";
+.icon-upload2:before {
+  content: "\e604";
 }
-.icon-checkmark:before {
-  content: "\e009";
-}
-.icon-cog:before {
-  content: "\e00a";
-}
-.icon-users:before {
-  content: "\e00b";
-}
-.icon-quotes-left:before {
-  content: "\e00c";
-}
-.icon-phone:before {
-  content: "\e00d";
-}
-.icon-envelop:before {
-  content: "\e00e";
-}
-.icon-wrench:before {
-  content: "\e00f";
-}
-.icon-arrow-right:before {
-  content: "\e010";
-}
-.icon-satellite:before {
-  content: "\e011";
-}
-.icon-heart:before {
-  content: "\e012";
-}
-.icon-star:before {
-  content: "\f005";
-}
-.icon-box:before {
-  content: "\e013";
-}
-.icon-cube:before {
-  content: "\e014";
-}
-.icon-batman:before {
-  content: "\e015";
-}
-.icon-space-invaders:before {
-  content: "\e016";
-}
-.icon-3d-glasses:before {
-  content: "\e017";
+.icon-arrow-up:before {
+  content: "\e605";
 }

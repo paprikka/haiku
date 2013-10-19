@@ -5,7 +5,7 @@
 
 
 $haiku-easing: cubic-bezier(.1, .7, .1, 1);
-$haiku-duration: .5s;
+$haiku-duration: .35s;
 
 %haiku__container{
   position: absolute;
@@ -25,4 +25,5 @@ $haiku-duration: .5s;
 @import "haiku/categories";
 @import "haiku/slides";
 @import "haiku/nav";
+@import "haiku/default-theme";
 

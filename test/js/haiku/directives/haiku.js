@@ -1,17 +1,26 @@
-angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slides', 'pl.paprikka.services.hammerjs', 'pl.paprikka.directives.haiku.hTap']).directive('haiku', [
+angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slides', 'pl.paprikka.services.hammerjs', 'pl.paprikka.directives.haiku.hTap', 'ngSanitize']).directive('haiku', [
   '$window', 'Slides', 'Hammer', function($window, Slides) {
     return {
       templateUrl: 'haiku/partials/haiku.html',
       restrict: 'AE',
       link: function(scope, elm, attrs) {
-        var onKeyDown;
+        var initSettings, onKeyDown, onMouseWheel;
         scope.categories = Slides.get();
-        scope.currentCategory = 0;
-        scope.currentSlide = 0;
-        scope.isLastCategory = false;
-        scope.isLastSlide = false;
-        scope.isFirstCategory = false;
-        scope.isFirstSlide = false;
+        initSettings = function(scope) {
+          scope.currentCategory = 0;
+          scope.currentSlide = 0;
+          scope.isLastCategory = false;
+          scope.isLastSlide = false;
+          scope.isFirstCategory = false;
+          return scope.isFirstSlide = false;
+        };
+        initSettings(scope);
+        scope.$watch('categories.length', function(n, o) {
+          if (n === o) {
+            return;
+          }
+          return initSettings(scope);
+        });
         scope.updatePosition = function() {
           var currCat, currSlide, _ref, _ref1;
           console.log("" + scope.currentCategory + " " + scope.currentSlide);
@@ -88,7 +97,7 @@ angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slid
         });
         onKeyDown = function(e) {
           if (!scope.$$phase) {
-            scope.$apply(function() {
+            return scope.$apply(function() {
               switch (e.keyCode) {
                 case 37:
                   return scope.prevCategory();
@@ -101,11 +110,17 @@ angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slid
               }
             });
           }
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          return false;
+        };
+        onMouseWheel = function(e) {
+          if (e.delta < -3) {
+            scope.nextSlide();
+          }
+          if (e.delta > 3) {
+            return scope.prevSlide();
+          }
         };
         $($window).on('keydown', onKeyDown);
+        $($window).on('mousewheel', onMouseWheel);
         scope.getCategoryClass = function(category) {
           return 'haiku__category--' + (category.status || 'prev');
         };
@@ -114,15 +129,28 @@ angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slid
         };
         scope.getSlideStyle = function(slide) {
           return {
-            'background-color': slide.background || '#333'
+            'background': slide.background || '#333',
+            'background-size': 'cover'
           };
         };
         scope.isCurrentSlide = function(slide) {
           return slide.index === scope.currentSlide && slide.categoryIndex === scope.currentCategory;
         };
-        return scope.goto = function(slide) {
+        scope.goto = function(slide) {
           scope.currentCategory = slide.categoryIndex;
           return scope.currentSlide = slide.index;
+        };
+        scope.getThemeClass = function() {
+          return 'haiku--default';
+        };
+        scope.files = [];
+        return scope.onFileDropped = function(markdownContent) {
+          return _.defer(function() {
+            return scope.$apply(function() {
+              scope.categories = Slides.getFromMarkdown(markdownContent);
+              return scope.updatePosition();
+            });
+          });
         };
       }
     };

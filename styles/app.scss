@@ -12,11 +12,11 @@
 @import '../vendor/inuit.css/inuit'; 
 
 // Custom components
-@import "ui/h";
 @import "ui/buttons";
 
 
 @import "ui/haiku";
+@import "ui/drop";
 
 *, *::after, *::before{
   box-sizing: border-box;

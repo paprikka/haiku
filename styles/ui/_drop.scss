@@ -1,19 +1,37 @@
 .ppk-drop{
 }
 .ppk-drop__box{
-  min-height:       300px;
-  width:            100%;
-  position:         relative;
-  background-color: $gray-lightest;
-  border-radius:    10px;
+  width: 100%;
+  height: 100%;
+  position:         absolute;
+  background-color: $alizarin;
+  transition: .3s all;
 
+  i{
+    pointer-events: none;
+    $w: 96px;
+    @extend .icon-arrow-down;
+    @extend [class*="icon-"];
+    color:              $gray-lighter;
+    font-size:          $w;
+    width:              $w;
+    height:             $w;
+    position:           absolute;
+    left:               50%;
+    top:                50%;
+    -webkit-transform:  translate(-50%, -50%);
+    transition:         .3s all ease-out 0;
+  }
 
   &:hover{
 
   }
 
   &.is-file-over{
-    background-color: transparentize($green, .7);
-
+    background-color: $green;
+    i{
+      opacity: 1;
+      -webkit-transform:  translate(-50%, -50%) rotate(180deg);
+    }
   }
 }
