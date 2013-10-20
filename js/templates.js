@@ -50,7 +50,11 @@ angular.module("drop/drop.html", []).run(["$templateCache", function($templateCa
   $templateCache.put("drop/drop.html",
     "\n" +
     "<div class=\"ppk-drop\">\n" +
-    "  <div ng-class=\" { 'is-file-over' : isFileOver } \" class=\"ppk-drop__box\"><i></i></div>\n" +
+    "  <div ng-class=\" { 'is-file-over' : isFileOver } \" class=\"ppk-drop__box\">\n" +
+    "    <input type=\"file\" multiple=\"multiple\" ng-class=\" { 'ppk-drop__input--polyfill': supportsUploadClickDelegation } \" class=\"ppk-drop__input\"/>\n" +
+    "    <div class=\"ppk-drop__info\"><i></i>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
     "</div>");
 }]);
 
@@ -69,21 +73,22 @@ angular.module("haiku/partials/haiku.html", []).run(["$templateCache", function(
     "\n" +
     "<div ng-class=\"getThemeClass()\" class=\"haiku\">\n" +
     "  <div ng-show=\"!categories.length\">\n" +
-    "    <ppk-drop on-drop=\"onFileDropped(markdownContent)\" files=\"files\"></ppk-drop>\n" +
+    "    <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
     "  </div>\n" +
-    "  <div ng-show=\"categories.length\">\n" +
+    "  <div ng-show=\"categories.length\" ng-dblclick=\"navVisible = !navVisible\">\n" +
     "    <ol class=\"haiku__categories\">\n" +
     "      <li ng-repeat=\"category in categories\" ng-class=\"getCategoryClass(category)\" class=\"haiku__category\">\n" +
     "        <div class=\"haiku__category-content\">\n" +
     "          <ol ng-show=\"category.slides.length\" class=\"haiku__slides\">\n" +
     "            <li ng-repeat=\"slide in category.slides\" ng-style=\"getSlideStyle(slide)\" ng-class=\"getSlideClass(slide)\" class=\"haiku__slide\">\n" +
-    "              <section ng-bind-html=\"slide.body\"></section>\n" +
+    "              <section ng-bind-html=\"slide.body\" class=\"haiku__slide-content\"></section>\n" +
     "            </li>\n" +
     "          </ol>\n" +
     "        </div>\n" +
     "      </li>\n" +
     "    </ol>\n" +
-    "    <div class=\"haiku-nav\">\n" +
+    "    <div ng-class=\" { 'haiku-nav--hidden' : !navVisible } \" class=\"haiku-nav\">\n" +
+    "      <button class=\"haiku__close-btn\"><i></i></button>\n" +
     "      <ol class=\"haiku-nav__categories\">\n" +
     "        <li ng-repeat=\"category in categories\" ng-class=\"{ 'haiku-nav__category--current' : currentCategory == slide.categoryIndex }\" class=\"haiku-nav__category\">\n" +
     "          <div class=\"haiku-nav__category-content\">\n" +

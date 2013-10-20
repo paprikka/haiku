@@ -47,7 +47,8 @@ angular.module('app.common.webSockets', []).service('WebSockets', [
 ])
 angular.module('pl.paprikka.directives.drop', [])
 .directive('ppkDrop', [
-  ->
+  '$window'
+  ($window)->
     restrict:     'AE'
     templateUrl:  'drop/drop.html'
     replace:      yes
@@ -76,26 +77,86 @@ angular.module('pl.paprikka.directives.drop', [])
       
       
       
+
       
       onDrop = (e) ->
         e.stopPropagation()
         e.preventDefault()
         dt = e.dataTransfer
-        scope.$apply -> scope.files = dt.files
+        scope.$apply -> 
+          scope.files = dt.files
+          scope.isFileOver = no
 
         if dt.files?[0]
-          reader = new FileReader
+          type = getFileType dt.files[0]            
 
-          reader.onload = (e)->
-            scope.onDrop? markdownContent : e.target.result
-            
-          reader.readAsText scope.files[0]
-  
+          if type is 'text'
+            getTextFiles dt.files[0], scope.onDrop
+          if type is 'images'
+            getImageFiles dt.files, scope.onDrop
 
 
+      # MIME type helper functions
+      getFileType = ( fileDesc ) ->
+        regex = /(\.[^.]+)$/i
+        ext = fileDesc.name.match(regex)?[0]
+        if fileDesc.type is ''
+          switch ext
+            when '.md' then 'text'
+            when '.txt' then 'text'
+        else if fileDesc.type.split('/')[0] is 'image'
+          'images'
+
+          
+      
+      getTextFiles = (fileRef, cb) ->
+        reader = new FileReader
+        reader.onload = (e)->
+          result = 
+            data: e.target.result
+            type: 'text'
+          cb? file:result
+
+        reader.readAsText fileRef
+
+      
+      getImageFiles = (fileRefs, cb) ->
+        reader      = new FileReader
+        totalCount  = fileRefs.length
+
+        result =
+          data : []
+          type : 'images'
+
+        loadSingleImage = ->
+          reader.readAsDataURL fileRefs[result.data.length]
+
+        reader.onload = (e) ->
+          result.data.push e.target.result
+          if result.data.length is totalCount
+            cb? file: result
+          else
+            loadSingleImage()
+        loadSingleImage()
         
 
       
+      
+      Hammer(elm).on 'doubletap', -> elm.find('.ppk-drop__input').click() 
+      elm.find('.ppk-drop__input').on 'change', (e) ->
+        scope.$apply -> scope.handleUpload e.target
+      
+      
+      scope.handleUpload = (dt)->
+        if dt.files?[0]
+          type = getFileType dt.files[0]            
+
+          if type is 'text'
+            getTextFiles dt.files[0], scope.onDrop
+          if type is 'images'
+            getImageFiles dt.files, scope.onDrop
+      
+      scope.supportsUploadClickDelegation = !!$window.navigator.userAgent.match(/(iPod|iPhone|iPad)/) && $window.navigator.userAgent.match(/AppleWebKit/)
 
 
 
@@ -211,7 +272,7 @@ angular.module('pl.paprikka.directives.haiku', [
           scope.currentSlide = scope.currentSlide + 1
 
       scope.$watch 'currentCategory', scope.updatePosition      
-      scope.$watch 'currentSlide', scope.updatePosition      
+      scope.$watch 'currentSlide', scope.updatePosition 
 
 
       Hammer(elm).on 'swipeleft',  (e)-> 
@@ -295,10 +356,21 @@ angular.module('pl.paprikka.directives.haiku', [
       scope.getThemeClass = -> 'haiku--default'
 
       scope.files = []
-      scope.onFileDropped = (markdownContent)->
+      scope.onFileDropped = (data)->
         _.defer -> scope.$apply ->
-          scope.categories = Slides.getFromMarkdown markdownContent
+          scope.categories = Slides.getFromFiles data
           scope.updatePosition()
+
+
+      Hammer(elm.find '.haiku__close-btn').on 'tap', (e) ->
+        scope.$apply -> scope.close()
+      
+      
+      scope.close = ->
+        scope.categories = []
+      
+      scope.navVisible = yes
+      
 
      # TODO: move to a subdirective     
      
@@ -374,7 +446,8 @@ angular.module('pl.paprikka.services.haiku.slides', [
       newCategories = []
 
       _.each categoryBodies, (cat) ->
-        slidesContents  = cat.split '<h1>'
+        slidesContents  = cat.replace(/<h1>/gi, '__PAGE_BREAK__<h1>').split '__PAGE_BREAK__'
+
         newCategory     = slides: []
 
         _.each slidesContents, (sc) ->
@@ -406,11 +479,27 @@ angular.module('pl.paprikka.services.haiku.slides', [
       indexSlides markdownToSlides markdown
       
     
+    Slides.getFromFiles = (files) ->
+      if files.type is 'text'
+        Slides.getFromMarkdown files.data
+      else if files.type is 'images'
+        Slides.getFromImages files.data
+      else []
     
     Slides.getFromMarkdown = (markdown) ->
       indexSlides markdownToSlides markdown
     
-    
+    Slides.getFromImages = (images) ->
+      categories = [ {slides: []} ]    
+      _.each images, (img) ->
+        slide =
+          background: 'url(' + img + ')'
+        categories[0].slides.push slide
+
+      indexSlides categories
+      
+      
+        
 
     Slides  
       

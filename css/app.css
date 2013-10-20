@@ -1,5 +1,11 @@
 @charset "IBM437";
-@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300);
+@import url(http://fonts.googleapis.com/css?family=Josefin+Slab:300,400,300italic,400italic);
+/* line 10, ../../styles/_typography.scss */
+h1, h2, h3, h4, h5 {
+  font-weight: 300;
+  font-family: "Josefin Slab", sans-serif;
+}
+
 @font-face {
   font-family: 'icomoon';
   src: url("../font/icomoon.eot");
@@ -9,7 +15,7 @@
 }
 
 /* line 3, ../../styles/ui/_icons.scss */
-[class*="icon-"], .ppk-drop__box i {
+[class*="icon-"], .haiku__close-btn i, .ppk-drop__box i {
   font-family: 'icomoon';
   speak: none;
   font-style: normal;
@@ -22,34 +28,49 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* line 17, ../../styles/ui/_icons.scss */
-.icon-arrow-down:before, .ppk-drop__box i:before {
+/* line 20, ../../styles/ui/_icons.scss */
+.icon-cloud-download:before {
   content: "\e600";
 }
 
-/* line 20, ../../styles/ui/_icons.scss */
-.icon-download:before {
+/* line 23, ../../styles/ui/_icons.scss */
+.icon-cloud-upload:before {
   content: "\e601";
 }
 
-/* line 23, ../../styles/ui/_icons.scss */
-.icon-cloud-download:before {
+/* line 26, ../../styles/ui/_icons.scss */
+.icon-arrow-down:before, .ppk-drop__box i:before {
   content: "\e602";
 }
 
-/* line 26, ../../styles/ui/_icons.scss */
-.icon-upload:before {
+/* line 29, ../../styles/ui/_icons.scss */
+.icon-download:before {
   content: "\e603";
 }
 
-/* line 29, ../../styles/ui/_icons.scss */
-.icon-upload2:before {
-  content: "\e604";
+/* line 32, ../../styles/ui/_icons.scss */
+.icon-cloud-download:before {
+  content: "\e605";
 }
 
-/* line 32, ../../styles/ui/_icons.scss */
+/* line 35, ../../styles/ui/_icons.scss */
+.icon-arrow-left:before, .haiku__close-btn i:before {
+  content: "\e606";
+}
+
+/* line 38, ../../styles/ui/_icons.scss */
+.icon-upload:before {
+  content: "\e607";
+}
+
+/* line 41, ../../styles/ui/_icons.scss */
+.icon-upload2:before {
+  content: "\e608";
+}
+
+/* line 44, ../../styles/ui/_icons.scss */
 .icon-arrow-up:before {
-  content: "\e605";
+  content: "\e609";
 }
 
 /*
@@ -5869,9 +5890,9 @@ html {
  */
 /* line 11, ../../vendor/inuit.css/base/_headings.scss */
 h1, .alpha {
-  font-size: 36px;
-  font-size: 2.25rem;
-  line-height: 1.33333;
+  font-size: 96px;
+  font-size: 6rem;
+  line-height: 1;
 }
 
 /* line 14, ../../vendor/inuit.css/base/_headings.scss */
@@ -8508,10 +8529,10 @@ html.flexbox {
 
 /* line 9, ../../styles/ui/haiku/_categories.scss */
 .haiku__category {
-  -webkit-transition: 0.35s all cubic-bezier(0.1, 0.7, 0.1, 1);
-  -moz-transition: 0.35s all cubic-bezier(0.1, 0.7, 0.1, 1);
-  -o-transition: 0.35s all cubic-bezier(0.1, 0.7, 0.1, 1);
-  transition: 0.35s all cubic-bezier(0.1, 0.7, 0.1, 1);
+  -webkit-transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
+  -moz-transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
+  -o-transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
+  transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
   -ms-transform: translate3d(0, 0, 0);
@@ -8539,7 +8560,7 @@ html.flexbox {
 
 /* line 23, ../../styles/ui/haiku/_categories.scss */
 .haiku__category--current {
-  transition-duration: 0.245s;
+  transition-duration: 0.315s;
 }
 
 /* line 1, ../../styles/ui/haiku/_slides.scss */
@@ -8553,7 +8574,7 @@ html.flexbox {
 .haiku__slide {
   opacity: 1;
   padding: 20px;
-  transition: 0.35s all cubic-bezier(0.1, 0.7, 0.1, 1);
+  transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
   background-size: cover;
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
@@ -8563,11 +8584,17 @@ html.flexbox {
 }
 
 /* line 16, ../../styles/ui/haiku/_slides.scss */
-.haiku__slide--current {
-  transition-duration: 0.315s;
+.haiku__slide-content {
+  max-width: 40em;
+  margin: 2em auto;
 }
 
-/* line 19, ../../styles/ui/haiku/_slides.scss */
+/* line 21, ../../styles/ui/haiku/_slides.scss */
+.haiku__slide--current {
+  transition-duration: 0.405s;
+}
+
+/* line 24, ../../styles/ui/haiku/_slides.scss */
 .haiku__slide--next {
   -webkit-transform: translate3d(0, 100%, 0);
   -moz-transform: translate3d(0, 100%, 0);
@@ -8576,7 +8603,7 @@ html.flexbox {
   transform: translate3d(0, 100%, 0);
 }
 
-/* line 23, ../../styles/ui/haiku/_slides.scss */
+/* line 28, ../../styles/ui/haiku/_slides.scss */
 .haiku__slide--prev {
   -webkit-transform: translate3d(0, -100%, 0);
   -moz-transform: translate3d(0, -100%, 0);
@@ -8593,38 +8620,46 @@ html.flexbox {
   left: 0;
   right: 0;
   padding: 10px;
+  transition: .3s all;
 }
 
-/* line 12, ../../styles/ui/haiku/_nav.scss */
+/* line 13, ../../styles/ui/haiku/_nav.scss */
+.haiku-nav--hidden {
+  opacity: 0;
+  visibility: hidden;
+  margin-right: -300px;
+}
+
+/* line 19, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__categories {
   list-style: none;
   padding: 0;
   margin: 0;
   display: block;
-  text-align: center;
+  text-align: right;
   width: 100%;
 }
 
-/* line 21, ../../styles/ui/haiku/_nav.scss */
+/* line 28, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__category {
   display: inline-block;
   vertical-align: top;
 }
 
-/* line 30, ../../styles/ui/haiku/_nav.scss */
+/* line 37, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__slides {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* line 37, ../../styles/ui/haiku/_nav.scss */
+/* line 44, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__slide {
   display: block;
   padding: 0 10px;
 }
 
-/* line 42, ../../styles/ui/haiku/_nav.scss */
+/* line 49, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button {
   vertical-align: middle;
   border: none;
@@ -8640,20 +8675,45 @@ html.flexbox {
   -o-transition: 0.4s all;
   transition: 0.4s all;
 }
-/* line 55, ../../styles/ui/haiku/_nav.scss */
+/* line 62, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button:focus {
   -webkit-outline: none;
   outline: none;
 }
-/* line 60, ../../styles/ui/haiku/_nav.scss */
+/* line 67, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button:active {
   box-shadow: 0 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* line 66, ../../styles/ui/haiku/_nav.scss */
+/* line 73, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button--active {
   background-color: rgba(0, 0, 0, 0.5);
   border: none transparent;
+}
+
+/* line 80, ../../styles/ui/haiku/_nav.scss */
+.haiku__close-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 32px;
+  display: block;
+  padding: 0;
+  line-height: 30px;
+  border: 2px solid rgba(254, 254, 254, 0.5);
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(254, 254, 254, 0.5);
+}
+/* line 100, ../../styles/ui/haiku/_nav.scss */
+.haiku__close-btn:focus {
+  outline: none;
+}
+/* line 104, ../../styles/ui/haiku/_nav.scss */
+.haiku__close-btn:active {
+  background-color: #fefefe;
+  color: black;
 }
 
 /* line 1, ../../styles/ui/haiku/_default-theme.scss */
@@ -8671,43 +8731,93 @@ html.flexbox {
   background-color: #e74c3c;
   transition: .3s all;
 }
-/* line 10, ../../styles/ui/_drop.scss */
+/* line 11, ../../styles/ui/_drop.scss */
 .ppk-drop__box i {
   pointer-events: none;
   color: #cacfd4;
   font-size: 96px;
   width: 96px;
   height: 96px;
+  transition: .3s all ease-out 0;
+  margin-bottom: 20px;
+}
+/* line 23, ../../styles/ui/_drop.scss */
+.ppk-drop__box .ppk-drop__input--polyfill {
+  opacity: 0;
   position: absolute;
   left: 50%;
   top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transition: .3s all ease-out 0;
+  width: 96px;
+  height: 96px;
+  margin-left: -48px;
+  margin-top: -48px;
+  z-index: 2;
+  visibility: visible;
 }
-/* line 30, ../../styles/ui/_drop.scss */
+/* line 41, ../../styles/ui/_drop.scss */
 .ppk-drop__box.is-file-over {
   background-color: #2ecc71;
 }
-/* line 32, ../../styles/ui/_drop.scss */
+/* line 43, ../../styles/ui/_drop.scss */
 .ppk-drop__box.is-file-over i {
   opacity: 1;
   -webkit-transform: translate(-50%, -50%) rotate(180deg);
 }
 
-/* line 21, ../../styles/app.scss */
+/* line 51, ../../styles/ui/_drop.scss */
+.ppk-drop__input {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* line 57, ../../styles/ui/_drop.scss */
+.ppk-drop__info {
+  width: 96px;
+  height: 96px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+}
+
+/* line 66, ../../styles/ui/_drop.scss */
+.ppk-drop__upload-btn {
+  border: 2px solid #fefefe;
+  border-radius: 5px;
+  padding: 0 1em;
+  background-color: transparent;
+  color: #fefefe;
+  line-height: 2em;
+}
+/* line 74, ../../styles/ui/_drop.scss */
+.ppk-drop__upload-btn:active {
+  background: #fefefe;
+  color: #e74c3c;
+}
+/* line 79, ../../styles/ui/_drop.scss */
+.ppk-drop__upload-btn:focus {
+  outline: none;
+}
+
+/* line 20, ../../styles/app.scss */
 *, *::after, *::before {
   box-sizing: border-box;
 }
 
-/* line 25, ../../styles/app.scss */
+/* line 24, ../../styles/app.scss */
+html {
+  overflow: hidden;
+}
+
+/* line 27, ../../styles/app.scss */
 body {
   user-select: none;
   -webkit-user-select: none;
-  font-family: "Source Sans Pro", "Helvetica Neue", sans-serif;
+  font-family: "Segoe UI Light", "Helvetica Neue", sans-serif;
   background: url(http://cdn2.dribbble.com/assets/noise-f1-99be850299aaf3f1e91225fa7a97228c.gif);
 }
 
-/* line 32, ../../styles/app.scss */
+/* line 34, ../../styles/app.scss */
 .viewport {
   padding: 30px;
   position: absolute;
@@ -8718,7 +8828,7 @@ body {
   overflow: hidden;
 }
 
-/* line 42, ../../styles/app.scss */
+/* line 44, ../../styles/app.scss */
 .intro-wrapper {
   position: absolute;
   top: 0;
@@ -8727,7 +8837,7 @@ body {
   left: 0;
 }
 
-/* line 57, ../../styles/app.scss */
+/* line 59, ../../styles/app.scss */
 .debug {
   position: fixed;
   top: 10px;

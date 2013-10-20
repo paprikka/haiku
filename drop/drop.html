@@ -1,4 +1,8 @@
 
 <div class="ppk-drop">
-  <div ng-class=" { 'is-file-over' : isFileOver } " class="ppk-drop__box"><i></i></div>
+  <div ng-class=" { 'is-file-over' : isFileOver } " class="ppk-drop__box">
+    <input type="file" multiple="multiple" ng-class=" { 'ppk-drop__input--polyfill': supportsUploadClickDelegation } " class="ppk-drop__input"/>
+    <div class="ppk-drop__info"><i></i>
+    </div>
+  </div>
 </div>

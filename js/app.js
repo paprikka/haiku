@@ -33,7 +33,7 @@ angular.module('app.common.webSockets', []).service('WebSockets', [
 ]);
 
 angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
-  function() {
+  '$window', function($window) {
     return {
       restrict: 'AE',
       templateUrl: 'drop/drop.html',
@@ -43,7 +43,7 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
         files: '='
       },
       link: function(scope, elm, attrs) {
-        var boxEl, onDragEnter, onDragLeave, onDragOver, onDrop;
+        var boxEl, getFileType, getImageFiles, getTextFiles, onDragEnter, onDragLeave, onDragOver, onDrop;
         boxEl = elm.find('.ppk-drop__box')[0];
         scope.isFileOver = false;
         onDragEnter = function(e) {
@@ -60,23 +60,98 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
           return e.preventDefault();
         };
         onDrop = function(e) {
-          var dt, reader, _ref;
+          var dt, type, _ref;
           e.stopPropagation();
           e.preventDefault();
           dt = e.dataTransfer;
           scope.$apply(function() {
-            return scope.files = dt.files;
+            scope.files = dt.files;
+            return scope.isFileOver = false;
           });
           if ((_ref = dt.files) != null ? _ref[0] : void 0) {
-            reader = new FileReader;
-            reader.onload = function(e) {
-              return typeof scope.onDrop === "function" ? scope.onDrop({
-                markdownContent: e.target.result
-              }) : void 0;
-            };
-            return reader.readAsText(scope.files[0]);
+            type = getFileType(dt.files[0]);
+            if (type === 'text') {
+              getTextFiles(dt.files[0], scope.onDrop);
+            }
+            if (type === 'images') {
+              return getImageFiles(dt.files, scope.onDrop);
+            }
           }
         };
+        getFileType = function(fileDesc) {
+          var ext, regex, _ref;
+          regex = /(\.[^.]+)$/i;
+          ext = (_ref = fileDesc.name.match(regex)) != null ? _ref[0] : void 0;
+          if (fileDesc.type === '') {
+            switch (ext) {
+              case '.md':
+                return 'text';
+              case '.txt':
+                return 'text';
+            }
+          } else if (fileDesc.type.split('/')[0] === 'image') {
+            return 'images';
+          }
+        };
+        getTextFiles = function(fileRef, cb) {
+          var reader;
+          reader = new FileReader;
+          reader.onload = function(e) {
+            var result;
+            result = {
+              data: e.target.result,
+              type: 'text'
+            };
+            return typeof cb === "function" ? cb({
+              file: result
+            }) : void 0;
+          };
+          return reader.readAsText(fileRef);
+        };
+        getImageFiles = function(fileRefs, cb) {
+          var loadSingleImage, reader, result, totalCount;
+          reader = new FileReader;
+          totalCount = fileRefs.length;
+          result = {
+            data: [],
+            type: 'images'
+          };
+          loadSingleImage = function() {
+            return reader.readAsDataURL(fileRefs[result.data.length]);
+          };
+          reader.onload = function(e) {
+            result.data.push(e.target.result);
+            if (result.data.length === totalCount) {
+              return typeof cb === "function" ? cb({
+                file: result
+              }) : void 0;
+            } else {
+              return loadSingleImage();
+            }
+          };
+          return loadSingleImage();
+        };
+        Hammer(elm).on('doubletap', function() {
+          return elm.find('.ppk-drop__input').click();
+        });
+        elm.find('.ppk-drop__input').on('change', function(e) {
+          return scope.$apply(function() {
+            return scope.handleUpload(e.target);
+          });
+        });
+        scope.handleUpload = function(dt) {
+          var type, _ref;
+          if ((_ref = dt.files) != null ? _ref[0] : void 0) {
+            type = getFileType(dt.files[0]);
+            if (type === 'text') {
+              getTextFiles(dt.files[0], scope.onDrop);
+            }
+            if (type === 'images') {
+              return getImageFiles(dt.files, scope.onDrop);
+            }
+          }
+        };
+        scope.supportsUploadClickDelegation = !!$window.navigator.userAgent.match(/(iPod|iPhone|iPad)/) && $window.navigator.userAgent.match(/AppleWebKit/);
         boxEl.addEventListener('dragenter', onDragEnter, false);
         boxEl.addEventListener('dragleave', onDragLeave, false);
         boxEl.addEventListener('dragover', onDragOver, false);
@@ -281,14 +356,23 @@ angular.module('pl.paprikka.directives.haiku', ['pl.paprikka.services.haiku.slid
           return 'haiku--default';
         };
         scope.files = [];
-        return scope.onFileDropped = function(markdownContent) {
+        scope.onFileDropped = function(data) {
           return _.defer(function() {
             return scope.$apply(function() {
-              scope.categories = Slides.getFromMarkdown(markdownContent);
+              scope.categories = Slides.getFromFiles(data);
               return scope.updatePosition();
             });
           });
         };
+        Hammer(elm.find('.haiku__close-btn')).on('tap', function(e) {
+          return scope.$apply(function() {
+            return scope.close();
+          });
+        });
+        scope.close = function() {
+          return scope.categories = [];
+        };
+        return scope.navVisible = true;
       }
     };
   }
@@ -350,7 +434,7 @@ angular.module('pl.paprikka.services.haiku.slides', ['pl.paprikka.services.markd
       newCategories = [];
       _.each(categoryBodies, function(cat) {
         var newCategory, slidesContents;
-        slidesContents = cat.split('<h1>');
+        slidesContents = cat.replace(/<h1>/gi, '__PAGE_BREAK__<h1>').split('__PAGE_BREAK__');
         newCategory = {
           slides: []
         };
@@ -383,8 +467,33 @@ angular.module('pl.paprikka.services.haiku.slides', ['pl.paprikka.services.markd
     Slides.get = function() {
       return indexSlides(markdownToSlides(markdown));
     };
+    Slides.getFromFiles = function(files) {
+      if (files.type === 'text') {
+        return Slides.getFromMarkdown(files.data);
+      } else if (files.type === 'images') {
+        return Slides.getFromImages(files.data);
+      } else {
+        return [];
+      }
+    };
     Slides.getFromMarkdown = function(markdown) {
       return indexSlides(markdownToSlides(markdown));
+    };
+    Slides.getFromImages = function(images) {
+      var categories;
+      categories = [
+        {
+          slides: []
+        }
+      ];
+      _.each(images, function(img) {
+        var slide;
+        slide = {
+          background: 'url(' + img + ')'
+        };
+        return categories[0].slides.push(slide);
+      });
+      return indexSlides(categories);
     };
     return Slides;
   }
