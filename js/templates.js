@@ -24,7 +24,7 @@ angular.module("haiku/partials/directives/nav.html", []).run(["$templateCache", 
     "  <div class=\"haiku-nav__tools\">\n" +
     "    <button ng-show=\"clientRole == 'host'\" h-tap=\"close()\" class=\"haiku__close-btn\"><i></i></button>\n" +
     "    <button ng-show=\"clientRole == 'host'\" h-tap=\"enableRemote()\" class=\"haiku__remote-btn\"><i></i></button>\n" +
-    "    <button h-tap=\"share()\" class=\"haiku__share-btn\"><i></i></button>\n" +
+    "    <button ng-show=\"clientRole == 'host'\" h-tap=\"share()\" class=\"haiku__share-btn\"><i></i></button>\n" +
     "  </div>\n" +
     "  <ol ng-show=\"categories.length &gt; 1\" class=\"haiku-nav__categories\">\n" +
     "    <li ng-repeat=\"category in categories\" ng-class=\"{ 'haiku-nav__category--current' : currentCategory == isCurrentCategory(category) }\" class=\"haiku-nav__category\">\n" +
@@ -74,7 +74,7 @@ angular.module("haiku/partials/modals/send-remote-url.html", []).run(["$template
     "<div class=\"modal__body\">\n" +
     "  <form name=\"form\" class=\"form\">\n" +
     "    <div class=\"form-item\">\n" +
-    "      <input name=\"modalEmail\" type=\"email\" placeholder=\"Type your email here\" ng-model=\"result.email\" required=\"required\" class=\"input-text input-text--huge\"/>\n" +
+    "      <input name=\"modalEmail\" type=\"email\" placeholder=\"Type your email here\" ng-model=\"result.email\" required=\"required\" class=\"input-text input-text--huge input--full\"/>\n" +
     "    </div>\n" +
     "  </form>\n" +
     "</div>\n" +
@@ -88,7 +88,11 @@ angular.module("haiku/partials/modals/share.html", []).run(["$templateCache", fu
   $templateCache.put("haiku/partials/modals/share.html",
     "\n" +
     "<div class=\"modal__title\">\n" +
-    "  <h2>Share a haiku</h2>\n" +
+    "  <h2>\n" +
+    "     \n" +
+    "    Share a haiku: \n" +
+    "    <input copy-on-select=\"copy-on-select\" ng-model=\"currentURL\" readonly=\"readonly\" class=\"input-text input--paste\"/>\n" +
+    "  </h2>\n" +
     "</div>\n" +
     "<div class=\"modal__body\">\n" +
     "  <ul class=\"haiku-share__emails\">\n" +
@@ -125,9 +129,12 @@ angular.module("haiku/partials/views/play.html", []).run(["$templateCache", func
   $templateCache.put("haiku/partials/views/play.html",
     "\n" +
     "<div ng-dblclick=\"navVisible = !navVisible\" class=\"page-content\">\n" +
-    "  <div ng-if=\"categories.length\">\n" +
+    "  <div ng-if=\"categories.length\" ng-show=\"UIReady\">\n" +
     "    <haiku categories=\"categories\" on-update=\"updateStatus(status)\"></haiku>\n" +
     "    <haiku-nav categories=\"categories\" visible=\"navVisible\" on-enable-remote=\"sendRemoteURL()\" on-share=\"shareURL()\"></haiku-nav>\n" +
+    "  </div>\n" +
+    "  <div ng-hide=\"UIReady\" class=\"haiku-loading\">\n" +
+    "    <div class=\"haiku-loading__label\">Loading...</div>\n" +
     "  </div>\n" +
     "</div>");
 }]);
@@ -137,9 +144,12 @@ angular.module("haiku/partials/views/view.html", []).run(["$templateCache", func
     "\n" +
     "<div ng-dblclick=\"navVisible = !navVisible\" class=\"page-content\">\n" +
     "  <div ng-switch=\"status\">\n" +
-    "    <div ng-switch-when=\"ready\">\n" +
+    "    <div ng-switch-when=\"ready\" ng-show=\"UIReady\">\n" +
     "      <haiku categories=\"categories\" on-update=\"updateStatus(status)\"></haiku>\n" +
     "      <haiku-nav categories=\"categories\" visible=\"navVisible\"></haiku-nav>\n" +
+    "    </div>\n" +
+    "    <div ng-hide=\"UIReady\" class=\"haiku-loading\">\n" +
+    "      <div class=\"haiku-loading__label\">Loading...</div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>");

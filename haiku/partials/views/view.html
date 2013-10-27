@@ -1,9 +1,12 @@
 
 <div ng-dblclick="navVisible = !navVisible" class="page-content">
   <div ng-switch="status">
-    <div ng-switch-when="ready">
+    <div ng-switch-when="ready" ng-show="UIReady">
       <haiku categories="categories" on-update="updateStatus(status)"></haiku>
       <haiku-nav categories="categories" visible="navVisible"></haiku-nav>
+    </div>
+    <div ng-hide="UIReady" class="haiku-loading">
+      <div class="haiku-loading__label">Loading...</div>
     </div>
   </div>
 </div>

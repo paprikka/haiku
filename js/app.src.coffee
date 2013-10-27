@@ -40,6 +40,16 @@ angular.module('app.controllers', [])
 
 ]).run()
 
+angular.module('app.common.directives.CopyOnSelect', []).directive('copyOnSelect', [
+  ->
+    restrict: 'A'
+    link: (scope, elm, attr)->
+      elm.on 'focus', (e) ->
+        _.defer => this.select()
+    
+    
+
+])
 angular.module("app.common.services.Modal", ['ui.bootstrap', 'ui.bootstrap.tpls'])
 .service('Modal', [
   '$modal'
@@ -252,17 +262,24 @@ angular.module('pl.paprikka.haiku.controllers.play', [
 
   # 'pl.paprikka.haiku.directives.nav'
   'app.common.services.Modal'
+  'app.common.directives.CopyOnSelect'
 ]).controller('HaikuPlayCtrl', [
 
   '$location'
   '$routeParams'
   '$rootScope'
   '$scope'
+  '$timeout'
   'Remote'
   'Modal'
   'Notify'
 
-  ( $location, $routeParams, $rootScope, $scope, Remote, Modal, Notify )->
+  ( $location, $routeParams, $rootScope, $scope, $timeout, Remote, Modal, Notify )->
+
+    showUI = ->
+      $scope.UIReady = yes
+
+    $timeout showUI, 2000
 
 
     $rootScope.$on 'haiku:remote:URLShared', ->
@@ -275,7 +292,7 @@ angular.module('pl.paprikka.haiku.controllers.play', [
       Notify.info 'Remote connected.'
 
     $rootScope.$on 'haiku:room:guestJoined', ->
-      Notify.info 'Yay, a guest has joined.'
+      Notify.info 'New guest has joined.'
 
 
     $scope.updateStatus = (data)->
@@ -306,6 +323,9 @@ angular.module('pl.paprikka.haiku.controllers.play', [
     shareCtrl = ($scope, $modalInstance) ->
       $scope.newEmail = value: ''
       $scope.emails = []
+      getCurrentURL = ->
+        location.toString().replace(/#\/play\//i, "#/view/")
+      $scope.currentURL = getCurrentURL()
 
       $scope.add = (email) ->
         if email?.length
@@ -329,10 +349,9 @@ angular.module('pl.paprikka.haiku.controllers.play', [
         templateUrl: 'haiku/partials/modals/share.html'
         controller: shareCtrl
 
-
       modalInstance.result.then (emails) ->
         console.log   emails
-        # Remote.shareURL $routeParams.roomID, emails
+        Remote.shareURL $routeParams.roomID, emails
 
     $location.path('/') unless $rootScope.categories?.length
     $scope.navVisible = yes
@@ -348,9 +367,12 @@ angular.module('pl.paprikka.haiku.controllers.view', [
   '$routeParams'
   '$rootScope'
   '$scope'
+  '$timeout'
   'Remote'
 
-  ( $location, $routeParams, $rootScope, $scope, Remote )->
+  ( $location, $routeParams, $rootScope, $scope, $timeout, Remote )->
+
+    $scope.status = 'loading'
 
     $rootScope.clientRole = 'guest'
     $scope.test = 'bar'
@@ -364,7 +386,12 @@ angular.module('pl.paprikka.haiku.controllers.view', [
       $scope.$apply ->
         $rootScope.categories = data.categories    
         $scope.status = 'ready'
-    
+        
+        showUI = ->
+          $scope.UIReady = yes
+
+        $timeout showUI, 2000
+
     
 
 
@@ -420,8 +447,6 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
     templateUrl: 'haiku/partials/haiku.html'
     restrict: 'AE'
     link: ( scope, elm, attrs )->
-
-      
 
       initSettings = (scope)->
         scope.categories.currentCategory   = 0

@@ -26,6 +26,22 @@ angular.module('app.controllers', []).controller('AppCtrl', [
   }
 ]).run();
 
+angular.module('app.common.directives.CopyOnSelect', []).directive('copyOnSelect', [
+  function() {
+    return {
+      restrict: 'A',
+      link: function(scope, elm, attr) {
+        return elm.on('focus', function(e) {
+          var _this = this;
+          return _.defer(function() {
+            return _this.select();
+          });
+        });
+      }
+    };
+  }
+]);
+
 angular.module("app.common.services.Modal", ['ui.bootstrap', 'ui.bootstrap.tpls']).service('Modal', [
   '$modal', function($modal) {
     window.m = $modal;
@@ -219,9 +235,13 @@ angular.module('pl.paprikka.haiku.controllers.import', ['pl.paprikka.haiku.servi
   }
 ]);
 
-angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal']).controller('HaikuPlayCtrl', [
-  '$location', '$routeParams', '$rootScope', '$scope', 'Remote', 'Modal', 'Notify', function($location, $routeParams, $rootScope, $scope, Remote, Modal, Notify) {
-    var sendCtrl, shareCtrl, _ref;
+angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal', 'app.common.directives.CopyOnSelect']).controller('HaikuPlayCtrl', [
+  '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', 'Modal', 'Notify', function($location, $routeParams, $rootScope, $scope, $timeout, Remote, Modal, Notify) {
+    var sendCtrl, shareCtrl, showUI, _ref;
+    showUI = function() {
+      return $scope.UIReady = true;
+    };
+    $timeout(showUI, 2000);
     $rootScope.$on('haiku:remote:URLShared', function() {
       return Notify.info('Invitations sent.');
     });
@@ -232,7 +252,7 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
       return Notify.info('Remote connected.');
     });
     $rootScope.$on('haiku:room:guestJoined', function() {
-      return Notify.info('Yay, a guest has joined.');
+      return Notify.info('New guest has joined.');
     });
     $scope.updateStatus = function(data) {
       return Remote.sendUpdates(data, $routeParams.roomID);
@@ -257,10 +277,15 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
       });
     };
     shareCtrl = function($scope, $modalInstance) {
+      var getCurrentURL;
       $scope.newEmail = {
         value: ''
       };
       $scope.emails = [];
+      getCurrentURL = function() {
+        return location.toString().replace(/#\/play\//i, "#/view/");
+      };
+      $scope.currentURL = getCurrentURL();
       $scope.add = function(email) {
         if (email != null ? email.length : void 0) {
           $scope.emails.push(email);
@@ -286,7 +311,8 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
         controller: shareCtrl
       });
       return modalInstance.result.then(function(emails) {
-        return console.log(emails);
+        console.log(emails);
+        return Remote.shareURL($routeParams.roomID, emails);
       });
     };
     if (!((_ref = $rootScope.categories) != null ? _ref.length : void 0)) {
@@ -297,7 +323,8 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
 ]);
 
 angular.module('pl.paprikka.haiku.controllers.view', []).controller('HaikuViewCtrl', [
-  '$location', '$routeParams', '$rootScope', '$scope', 'Remote', function($location, $routeParams, $rootScope, $scope, Remote) {
+  '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', function($location, $routeParams, $rootScope, $scope, $timeout, Remote) {
+    $scope.status = 'loading';
     $rootScope.clientRole = 'guest';
     $scope.test = 'bar';
     if (!$routeParams.roomID) {
@@ -307,8 +334,13 @@ angular.module('pl.paprikka.haiku.controllers.view', []).controller('HaikuViewCt
     return $rootScope.$on('haiku:room:joined', function(scope, data) {
       Remote.broadcastJoinedGuest(data.room);
       return $scope.$apply(function() {
+        var showUI;
         $rootScope.categories = data.categories;
-        return $scope.status = 'ready';
+        $scope.status = 'ready';
+        showUI = function() {
+          return $scope.UIReady = true;
+        };
+        return $timeout(showUI, 2000);
       });
     });
   }

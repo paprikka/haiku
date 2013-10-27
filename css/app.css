@@ -5899,7 +5899,7 @@ html {
  * heading hierarchy.
  */
 /* line 11, ../../vendor/inuit.css/base/_headings.scss */
-h1, .alpha {
+h1, .alpha, .haiku-loading__label {
   font-size: 96px;
   font-size: 6rem;
   line-height: 1;
@@ -7985,7 +7985,7 @@ html.flexbox {
 /* line 8, ../../vendor/inuit.css/generic/_brand.scss */
 .brand {
   font-family: "Helvetica Neue", sans-serif!important;
-  color: #facade!important;
+  color: #7f748c!important;
 }
 
 /* line 12, ../../vendor/inuit.css/generic/_brand.scss */
@@ -7996,7 +7996,7 @@ html.flexbox {
 /* line 16, ../../vendor/inuit.css/generic/_brand.scss */
 .brand-color,
 .brand-colour {
-  color: #facade!important;
+  color: #7f748c!important;
 }
 
 /*------------------------------------*\
@@ -8529,11 +8529,12 @@ html.flexbox {
   background-color: #fefefe;
   border: 1px solid #cacfd4;
   line-height: 2;
-  padding: 0 1em 1px;
+  padding: 0 .5em 1px;
   transition: .3s all;
   font-size: 14px;
+  font-family: "Segoe UI Light", "Helvetica Neue", sans-serif;
 }
-/* line 17, ../../styles/ui/_form.scss */
+/* line 20, ../../styles/ui/_form.scss */
 .input-text:focus, .haiku-share__add-input:focus {
   outline: none;
   border-color: #049cdb;
@@ -8543,11 +8544,17 @@ html.flexbox {
   box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
 }
 
-/* line 26, ../../styles/ui/_form.scss */
+/* line 29, ../../styles/ui/_form.scss */
 .input-text--huge {
   font-size: 32px;
   text-align: center;
   letter-spacing: 2px;
+}
+
+/* line 35, ../../styles/ui/_form.scss */
+.input--full {
+  display: block;
+  width: 100%;
 }
 
 /* line 10, ../../styles/ui/_haiku.scss */
@@ -8562,6 +8569,28 @@ html.flexbox {
 /* line 20, ../../styles/ui/_haiku.scss */
 .haiku, .haiku * {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* line 27, ../../styles/ui/_haiku.scss */
+.haiku-loading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(254, 254, 254, 0.6);
+}
+
+/* line 36, ../../styles/ui/_haiku.scss */
+.haiku-loading__label {
+  font-weight: 300;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  color: #7f748c;
+  position: absolute;
+  width: 100%;
+  margin: -40px auto 0;
+  top: 50%;
 }
 
 /* line 2, ../../styles/ui/haiku/_categories.scss */
@@ -8726,10 +8755,10 @@ html.flexbox {
   border: 2px solid rgba(0, 0, 0, 0.3);
   background-color: transparent;
   opacity: .8;
-  -webkit-transition: 0.25s all;
-  -moz-transition: 0.25s all;
-  -o-transition: 0.25s all;
-  transition: 0.25s all;
+  -webkit-transition: 0.1s box-shadow;
+  -moz-transition: 0.1s box-shadow;
+  -o-transition: 0.1s box-shadow;
+  transition: 0.1s box-shadow;
   margin-top: 1em;
 }
 /* line 71, ../../styles/ui/haiku/_nav.scss */
@@ -8739,7 +8768,7 @@ html.flexbox {
 }
 /* line 76, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button:active {
-  box-shadow: 0 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 25px rgba(0, 0, 0, 0.5);
 }
 @media all and (max-width: 1024px) {
   /* line 57, ../../styles/ui/haiku/_nav.scss */
@@ -8773,8 +8802,8 @@ html.flexbox {
   padding: 0;
   line-height: 30px;
   border: none;
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(254, 254, 254, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(254, 254, 254, 0.7);
   margin-bottom: 0;
   font-size: 18px;
 }
@@ -8839,6 +8868,11 @@ html.flexbox {
   border: none;
   color: #161927;
   margin-right: 0;
+}
+
+/* line 55, ../../styles/ui/haiku/modals/_share.scss */
+.input--paste {
+  vertical-align: middle;
 }
 
 /* line 3, ../../styles/ui/_drop.scss */

@@ -8,9 +8,6 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam fugiat sapiente bl
 
 - Lorem ipsum dolor sit amet
 - consectetur adipisicing elit. Sunt
-- numquam
-- at architecto repellat quasi itaque sint harum. Nisi
-- non, distinctio, beatae expedita ad quod atque blanditiis rerum numquam alias quaerat.
 
 # Slide title
 
