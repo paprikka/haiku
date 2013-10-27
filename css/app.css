@@ -9029,17 +9029,37 @@ html.flexbox {
   background: rgba(0, 0, 0, 0.4);
 }
 
-/* line 26, ../../styles/app.scss */
+/* line 1, ../../styles/ui/_import.scss */
+.import__example {
+  font-size: 24px;
+  border: 2px solid #7f748c;
+  border-radius: 10px;
+  padding: 0 .5em 2px;
+  color: #7f748c;
+  text-decoration: none;
+  text-transform: uppercase;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2;
+}
+/* line 16, ../../styles/ui/_import.scss */
+.import__example:active {
+  background-color: #7f748c;
+  color: #fefefe;
+}
+
+/* line 28, ../../styles/app.scss */
 *, *::after, *::before {
   box-sizing: border-box;
 }
 
-/* line 30, ../../styles/app.scss */
+/* line 32, ../../styles/app.scss */
 html {
   overflow: hidden;
 }
 
-/* line 33, ../../styles/app.scss */
+/* line 35, ../../styles/app.scss */
 body {
   user-select: none;
   -webkit-user-select: none;
@@ -9050,7 +9070,7 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.001);
 }
 
-/* line 44, ../../styles/app.scss */
+/* line 46, ../../styles/app.scss */
 .viewport {
   padding: 0;
   position: absolute;
@@ -9061,7 +9081,7 @@ body {
   overflow: hidden;
 }
 
-/* line 54, ../../styles/app.scss */
+/* line 56, ../../styles/app.scss */
 .intro-wrapper {
   position: absolute;
   top: 0;
@@ -9070,7 +9090,7 @@ body {
   left: 0;
 }
 
-/* line 69, ../../styles/app.scss */
+/* line 71, ../../styles/app.scss */
 .debug {
   position: fixed;
   top: 10px;

@@ -120,7 +120,7 @@ angular.module("haiku/partials/modals/share.html", []).run(["$templateCache", fu
 angular.module("haiku/partials/views/import.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/views/import.html",
     "\n" +
-    "<div class=\"haiku-import\">\n" +
+    "<div class=\"haiku-import\"><a href=\"examples/categories.md\" target=\"_blank\" class=\"import__example\">Download example</a>\n" +
     "  <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
     "</div>");
 }]);
