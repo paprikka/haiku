@@ -1,0 +1,7 @@
+
+<div ng-dblclick="navVisible = !navVisible" class="page-content">
+  <div ng-if="categories.length">
+    <haiku categories="categories" on-update="updateStatus(status)"></haiku>
+    <haiku-nav categories="categories" visible="navVisible" on-enable-remote="sendRemoteURL()" on-share="shareURL()"></haiku-nav>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+
+<div ng-dblclick="navVisible = !navVisible" class="page-content">
+  <div ng-switch="status">
+    <div ng-switch-when="ready">
+      <haiku categories="categories" on-update="updateStatus(status)"></haiku>
+      <haiku-nav categories="categories" visible="navVisible"></haiku-nav>
+    </div>
+  </div>
+</div>

@@ -1,49 +1,8 @@
-angular.module('templates', ['canvas/directives/drag-rectangle.html', 'canvas/directives/partials/canvas.html', 'canvas/directives/partials/editor.html', 'canvas/views/edit.html', 'drop/drop.html', 'hacker-news/partials/index.html', 'haiku/partials/haiku.html', 'head.html', 'index.html', 'pages/404.html', 'pages/partials/intro.html', 'ui/logo/logo.html']);
+angular.module('templates', ['common/partials/modal-prompt.html', 'drop/drop.html', 'haiku/partials/directives/nav.html', 'haiku/partials/haiku-import.html', 'haiku/partials/haiku.html', 'haiku/partials/modals/send-remote-url.html', 'haiku/partials/modals/share.html', 'haiku/partials/views/import.html', 'haiku/partials/views/play.html', 'haiku/partials/views/view.html', 'head.html', 'index.html', 'pages/404.html', 'pages/partials/intro.html']);
 
-angular.module("canvas/directives/drag-rectangle.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("canvas/directives/drag-rectangle.html",
-    "\n" +
-    "<div ng-style=\"coords\" ng-class=\" { 'is-scaling' : state == 'scaling' } \" class=\"ppk-drag-rectangle\">\n" +
-    "  <div class=\"ppk-drag-rectangle__overlay-top\"></div>\n" +
-    "  <div class=\"ppk-drag-rectangle__overlay-right\"></div>\n" +
-    "  <div class=\"ppk-drag-rectangle__overlay-bottom\"></div>\n" +
-    "  <div class=\"ppk-drag-rectangle__overlay-left\"></div>\n" +
-    "</div>");
-}]);
-
-angular.module("canvas/directives/partials/canvas.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("canvas/directives/partials/canvas.html",
-    "");
-}]);
-
-angular.module("canvas/directives/partials/editor.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("canvas/directives/partials/editor.html",
-    "\n" +
-    "<div class=\"ppk-canvas\">\n" +
-    "  <div class=\"ppk-canvas__container\">\n" +
-    "    <div ng-hide=\"files.length\" class=\"ppk-canvas__drop\">\n" +
-    "      <ppk-drop on-drop=\"handleFiles()\" files=\"files\"></ppk-drop>\n" +
-    "    </div>\n" +
-    "    <div ng-show=\"files.length\" class=\"ppk-canvas__preview\"><img class=\"ppk-canvas__image\"/>\n" +
-    "      <canvas width=\"640\" height=\"480\" class=\"ppk-canvas__editor\"></canvas>\n" +
-    "      <ppk-drag-rectangle position=\"position\"></ppk-drag-rectangle>\n" +
-    "    </div>\n" +
-    "  </div>\n" +
-    "  <div class=\"ppk-canvas__tools\">\n" +
-    "    <button tabindex=\"-1\" ng-click=\"clear()\" class=\"ppk-canvas__tool ppk-canvas__clear\">&times;</button>\n" +
-    "    <button tabindex=\"-1\" ng-click=\"download()\" class=\"ppk-canvas__tool ppk-canvas__save\">Pobierz;</button>\n" +
-    "    <div class=\"float--right\">\n" +
-    "      <input type=\"number\" placeholder=\"Width\"/>&times;\n" +
-    "      <input type=\"number\" placeholder=\"Height\"/>\n" +
-    "    </div>\n" +
-    "  </div>\n" +
-    "</div>");
-}]);
-
-angular.module("canvas/views/edit.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("canvas/views/edit.html",
-    "\n" +
-    "<ppk-canvas-editor></ppk-canvas-editor>");
+angular.module("common/partials/modal-prompt.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("common/partials/modal-prompt.html",
+    "{{ test }}");
 }]);
 
 angular.module("drop/drop.html", []).run(["$templateCache", function($templateCache) {
@@ -58,23 +17,38 @@ angular.module("drop/drop.html", []).run(["$templateCache", function($templateCa
     "</div>");
 }]);
 
-angular.module("hacker-news/partials/index.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("hacker-news/partials/index.html",
+angular.module("haiku/partials/directives/nav.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/directives/nav.html",
     "\n" +
-    "<h1 class=\"alpha\">HN Index</h1>\n" +
-    "<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n" +
-    "<ul class=\"news\">\n" +
-    "  <li ng-repeat=\"newsItem in news\" class=\"news__item\"><a ng-href=\"{{newsItem.url}}\" class=\"news__title\">{{ newsItem.title }}</a></li>\n" +
-    "</ul>");
+    "<div ng-class=\" { 'haiku-nav--hidden' : !visible } \" class=\"haiku-nav\">\n" +
+    "  <div class=\"haiku-nav__tools\">\n" +
+    "    <button ng-show=\"clientRole == 'host'\" h-tap=\"close()\" class=\"haiku__close-btn\"><i></i></button>\n" +
+    "    <button ng-show=\"clientRole == 'host'\" h-tap=\"enableRemote()\" class=\"haiku__remote-btn\"><i></i></button>\n" +
+    "    <button h-tap=\"share()\" class=\"haiku__share-btn\"><i></i></button>\n" +
+    "  </div>\n" +
+    "  <ol ng-show=\"categories.length &gt; 1\" class=\"haiku-nav__categories\">\n" +
+    "    <li ng-repeat=\"category in categories\" ng-class=\"{ 'haiku-nav__category--current' : currentCategory == isCurrentCategory(category) }\" class=\"haiku-nav__category\">\n" +
+    "      <button ng-class=\"{'haiku-nav__button--active': isCurrentCategory(category)}\" h-tap=\"goto({index: 0, categoryIndex: $index})\" class=\"haiku-nav__button\"></button>\n" +
+    "    </li>\n" +
+    "  </ol>\n" +
+    "  <ol ng-show=\"categories[categories.currentCategory].slides.length &gt; 1\" class=\"haiku-nav__slides\">\n" +
+    "    <li ng-repeat=\"slide in categories[categories.currentCategory].slides\" class=\"haiku-nav__slide\">\n" +
+    "      <button ng-class=\"{'haiku-nav__button--active': isCurrentSlide(slide)}\" h-tap=\"goto(slide)\" class=\"haiku-nav__button\"></button>\n" +
+    "    </li>\n" +
+    "  </ol>\n" +
+    "</div>");
+}]);
+
+angular.module("haiku/partials/haiku-import.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/haiku-import.html",
+    "\n" +
+    "<h1>Haiku import</h1>");
 }]);
 
 angular.module("haiku/partials/haiku.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/haiku.html",
     "\n" +
     "<div ng-class=\"getThemeClass()\" class=\"haiku\">\n" +
-    "  <div ng-show=\"!categories.length\">\n" +
-    "    <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
-    "  </div>\n" +
     "  <div ng-show=\"categories.length\" ng-dblclick=\"navVisible = !navVisible\">\n" +
     "    <ol class=\"haiku__categories\">\n" +
     "      <li ng-repeat=\"category in categories\" ng-class=\"getCategoryClass(category)\" class=\"haiku__category\">\n" +
@@ -87,19 +61,85 @@ angular.module("haiku/partials/haiku.html", []).run(["$templateCache", function(
     "        </div>\n" +
     "      </li>\n" +
     "    </ol>\n" +
-    "    <div ng-class=\" { 'haiku-nav--hidden' : !navVisible } \" class=\"haiku-nav\">\n" +
-    "      <button class=\"haiku__close-btn\"><i></i></button>\n" +
-    "      <ol class=\"haiku-nav__categories\">\n" +
-    "        <li ng-repeat=\"category in categories\" ng-class=\"{ 'haiku-nav__category--current' : currentCategory == slide.categoryIndex }\" class=\"haiku-nav__category\">\n" +
-    "          <div class=\"haiku-nav__category-content\">\n" +
-    "            <ol class=\"haiku-nav__slides\">\n" +
-    "              <li ng-repeat=\"slide in category.slides\" class=\"haiku-nav__slide\">\n" +
-    "                <button ng-class=\"{'haiku-nav__button--active': isCurrentSlide(slide)}\" h-tap=\"goto(slide)\" class=\"haiku-nav__button\"></button>\n" +
-    "              </li>\n" +
-    "            </ol>\n" +
-    "          </div>\n" +
-    "        </li>\n" +
-    "      </ol>\n" +
+    "  </div>\n" +
+    "</div>");
+}]);
+
+angular.module("haiku/partials/modals/send-remote-url.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/modals/send-remote-url.html",
+    "\n" +
+    "<div class=\"modal__title\">\n" +
+    "  <h2>Get Remote Control URL</h2>\n" +
+    "</div>\n" +
+    "<div class=\"modal__body\">\n" +
+    "  <form name=\"form\" class=\"form\">\n" +
+    "    <div class=\"form-item\">\n" +
+    "      <input name=\"modalEmail\" type=\"email\" placeholder=\"Type your email here\" ng-model=\"result.email\" required=\"required\" class=\"input-text input-text--huge\"/>\n" +
+    "    </div>\n" +
+    "  </form>\n" +
+    "</div>\n" +
+    "<div class=\"modal__footer\">\n" +
+    "  <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"ok()\" class=\"btn btn--positive\">Ok, send.</button>\n" +
+    "  <button ng-click=\"cancel()\" class=\"btn btn--negative\">Cancel</button>\n" +
+    "</div>");
+}]);
+
+angular.module("haiku/partials/modals/share.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/modals/share.html",
+    "\n" +
+    "<div class=\"modal__title\">\n" +
+    "  <h2>Share a haiku</h2>\n" +
+    "</div>\n" +
+    "<div class=\"modal__body\">\n" +
+    "  <ul class=\"haiku-share__emails\">\n" +
+    "    <li ng-show=\"!emails.length\">\n" +
+    "      <div class=\"beta\">Boooo</div>\n" +
+    "      <p>No one's invited to the party :(</p>\n" +
+    "    </li>\n" +
+    "    <li ng-repeat=\"email in emails\" class=\"haiku-share__email\"><span>{{email}}</span>\n" +
+    "      <button ng-click=\"remove(email)\" tabindex=\"-1\" class=\"haiku-share__remove\">&times;</button>\n" +
+    "    </li>\n" +
+    "  </ul>\n" +
+    "  <form name=\"form\" novalidate=\"novalidate\" ng-submit=\"add(newEmail.value)\" class=\"form\">\n" +
+    "    <div class=\"form-item\">\n" +
+    "      <input name=\"modalEmail\" type=\"email\" placeholder=\"Add new email...\" ng-model=\"newEmail.value\" required=\"required\" class=\"haiku-share__add-input\"/>\n" +
+    "      <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"add(newEmail.value)\" class=\"haiku-share__add\">Add</button>\n" +
+    "    </div>\n" +
+    "  </form>\n" +
+    "</div>\n" +
+    "<div class=\"modal__footer\">\n" +
+    "  <button ng-disabled=\"!emails.length\" ng-click=\"ok()\" class=\"btn btn--positive\">Ok, send.</button>\n" +
+    "  <button ng-click=\"cancel()\" class=\"btn btn--negative\">Cancel</button>\n" +
+    "</div>");
+}]);
+
+angular.module("haiku/partials/views/import.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/views/import.html",
+    "\n" +
+    "<div class=\"haiku-import\">\n" +
+    "  <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
+    "</div>");
+}]);
+
+angular.module("haiku/partials/views/play.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/views/play.html",
+    "\n" +
+    "<div ng-dblclick=\"navVisible = !navVisible\" class=\"page-content\">\n" +
+    "  <div ng-if=\"categories.length\">\n" +
+    "    <haiku categories=\"categories\" on-update=\"updateStatus(status)\"></haiku>\n" +
+    "    <haiku-nav categories=\"categories\" visible=\"navVisible\" on-enable-remote=\"sendRemoteURL()\" on-share=\"shareURL()\"></haiku-nav>\n" +
+    "  </div>\n" +
+    "</div>");
+}]);
+
+angular.module("haiku/partials/views/view.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/views/view.html",
+    "\n" +
+    "<div ng-dblclick=\"navVisible = !navVisible\" class=\"page-content\">\n" +
+    "  <div ng-switch=\"status\">\n" +
+    "    <div ng-switch-when=\"ready\">\n" +
+    "      <haiku categories=\"categories\" on-update=\"updateStatus(status)\"></haiku>\n" +
+    "      <haiku-nav categories=\"categories\" visible=\"navVisible\"></haiku-nav>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>");
@@ -121,7 +161,7 @@ angular.module("head.html", []).run(["$templateCache", function($templateCache) 
     "  <meta name=\"description\" content=\"\"/>\n" +
     "  <meta name=\"author\" content=\"Rafał Pastuszak &lt;rafal@paprikka.pl&gt;\"/>\n" +
     "  <meta name=\"robots\" content=\"noindex\"/>\n" +
-    "  <title>Application Title</title>\n" +
+    "  <title>Haikµ</title>\n" +
     "  <link rel=\"stylesheet\" href=\"css/app.css\"/>\n" +
     "  <script>\n" +
     "    (function() {\n" +
@@ -173,7 +213,7 @@ angular.module("index.html", []).run(["$templateCache", function($templateCache)
     "    <meta name=\"description\" content=\"\">\n" +
     "    <meta name=\"author\" content=\"Rafał Pastuszak &lt;rafal@paprikka.pl&gt;\">\n" +
     "    <meta name=\"robots\" content=\"noindex\">\n" +
-    "    <title>Application Title</title>\n" +
+    "    <title>Haikµ</title>\n" +
     "    <link rel=\"stylesheet\" href=\"css/app.css\">\n" +
     "    <script>\n" +
     "      (function() {\n" +
@@ -232,10 +272,4 @@ angular.module("pages/partials/intro.html", []).run(["$templateCache", function(
     "    <haiku></haiku>\n" +
     "  </div>\n" +
     "</div>");
-}]);
-
-angular.module("ui/logo/logo.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("ui/logo/logo.html",
-    "\n" +
-    "<div class=\"app-logo\"><span class=\"app-logo__title\">Veeery </span>opinionated</div>");
 }]);

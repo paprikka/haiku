@@ -1,9 +1,9 @@
 @charset "IBM437";
-@import url(http://fonts.googleapis.com/css?family=Josefin+Slab:300,400,300italic,400italic);
-/* line 10, ../../styles/_typography.scss */
+@import url(http://fonts.googleapis.com/css?family=Quicksand:300,400);
+/* line 11, ../../styles/_typography.scss */
 h1, h2, h3, h4, h5 {
   font-weight: 300;
-  font-family: "Josefin Slab", sans-serif;
+  font-family: "Quicksand", sans-serif;
 }
 
 @font-face {
@@ -15,7 +15,7 @@ h1, h2, h3, h4, h5 {
 }
 
 /* line 3, ../../styles/ui/_icons.scss */
-[class*="icon-"], .haiku__close-btn i, .ppk-drop__box i {
+[class*="icon-"], .haiku__share-btn i, .haiku__remote-btn i, .haiku__close-btn i, .ppk-drop__box i {
   font-family: 'icomoon';
   speak: none;
   font-style: normal;
@@ -28,49 +28,59 @@ h1, h2, h3, h4, h5 {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* line 20, ../../styles/ui/_icons.scss */
+/* line 18, ../../styles/ui/_icons.scss */
 .icon-cloud-download:before {
   content: "\e600";
 }
 
-/* line 23, ../../styles/ui/_icons.scss */
+/* line 21, ../../styles/ui/_icons.scss */
 .icon-cloud-upload:before {
   content: "\e601";
 }
 
-/* line 26, ../../styles/ui/_icons.scss */
+/* line 24, ../../styles/ui/_icons.scss */
 .icon-arrow-down:before, .ppk-drop__box i:before {
   content: "\e602";
 }
 
-/* line 29, ../../styles/ui/_icons.scss */
+/* line 27, ../../styles/ui/_icons.scss */
 .icon-download:before {
   content: "\e603";
 }
 
-/* line 32, ../../styles/ui/_icons.scss */
+/* line 30, ../../styles/ui/_icons.scss */
 .icon-cloud-download:before {
   content: "\e605";
 }
 
-/* line 35, ../../styles/ui/_icons.scss */
+/* line 33, ../../styles/ui/_icons.scss */
 .icon-arrow-left:before, .haiku__close-btn i:before {
   content: "\e606";
 }
 
-/* line 38, ../../styles/ui/_icons.scss */
+/* line 36, ../../styles/ui/_icons.scss */
 .icon-upload:before {
   content: "\e607";
 }
 
-/* line 41, ../../styles/ui/_icons.scss */
+/* line 39, ../../styles/ui/_icons.scss */
 .icon-upload2:before {
   content: "\e608";
 }
 
-/* line 44, ../../styles/ui/_icons.scss */
+/* line 42, ../../styles/ui/_icons.scss */
 .icon-arrow-up:before {
   content: "\e609";
+}
+
+/* line 45, ../../styles/ui/_icons.scss */
+.icon-export:before, .haiku__share-btn i:before {
+  content: "\e604";
+}
+
+/* line 48, ../../styles/ui/_icons.scss */
+.icon-wifi-full:before, .haiku__remote-btn i:before {
+  content: "\e60a";
 }
 
 /*
@@ -5896,7 +5906,7 @@ h1, .alpha {
 }
 
 /* line 14, ../../vendor/inuit.css/base/_headings.scss */
-h2, .beta {
+h2, .beta, .modal__title h1 {
   font-size: 30px;
   font-size: 1.875rem;
   line-height: 1.6;
@@ -6854,7 +6864,7 @@ html.flexbox {
  * 9. Don’t allow buttons to have underlines; it kinda ruins the illusion.
  */
 /* line 56, ../../vendor/inuit.css/objects/_beautons.scss */
-.btn {
+.btn, .haiku-share__add {
   display: inline-block;
   /* [1] */
   vertical-align: middle;
@@ -6886,12 +6896,12 @@ html.flexbox {
 }
 
 /* line 76, ../../vendor/inuit.css/objects/_beautons.scss */
-.btn, .btn:hover {
+.btn, .haiku-share__add, .btn:hover, .haiku-share__add:hover {
   text-decoration: none;
   /* [9] */
 }
 /* line 81, ../../vendor/inuit.css/objects/_beautons.scss */
-.btn:active, .btn:focus {
+.btn:active, .haiku-share__add:active, .btn:focus, .haiku-share__add:focus {
   outline: none;
 }
 
@@ -6905,7 +6915,7 @@ html.flexbox {
  * remains uniform.
  */
 /* line 99, ../../vendor/inuit.css/objects/_beautons.scss */
-.btn--small {
+.btn--small, .haiku-share__add {
   padding-right: 0.5em;
   padding-left: 0.5em;
   line-height: 2;
@@ -6965,7 +6975,7 @@ html.flexbox {
  * Make the button inherit sizing from its parent.
  */
 /* line 154, ../../vendor/inuit.css/objects/_beautons.scss */
-.btn--natural {
+.btn--natural, .haiku-share__remove {
   vertical-align: baseline;
   font-size: inherit;
   line-height: inherit;
@@ -8448,7 +8458,7 @@ html.flexbox {
 }
 /* endif */
 /* line 3, ../../styles/ui/_buttons.scss */
-.btn {
+.btn, .haiku-share__add {
   min-width: 40px;
   border-radius: 2px;
   -webkit-transition: 0.2s box-shadow;
@@ -8462,23 +8472,23 @@ html.flexbox {
   background-image: linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
 }
 /* line 10, ../../styles/ui/_buttons.scss */
-.btn:active, .btn.active {
+.btn:active, .haiku-share__add:active, .btn.active, .active.haiku-share__add {
   -webkit-box-shadow: 0 1px 1px shadow-col(0.2) inset;
   -moz-box-shadow: 0 1px 1px shadow-col(0.2) inset;
   box-shadow: 0 1px 1px shadow-col(0.2) inset;
 }
 /* line 14, ../../styles/ui/_buttons.scss */
-.btn:disabled, .btn.disabled {
+.btn:disabled, .haiku-share__add:disabled, .btn.disabled, .disabled.haiku-share__add {
   opacity: .6;
 }
 /* line 18, ../../styles/ui/_buttons.scss */
-.btn:focus {
-  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+.btn:focus, .haiku-share__add:focus {
+  -webkit-box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
+  -moz-box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
+  box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
 }
 /* line 23, ../../styles/ui/_buttons.scss */
-.btn:focus:hover, .btn:focus:active, .btn:focus.active {
+.btn:focus:hover, .haiku-share__add:focus:hover, .btn:focus:active, .haiku-share__add:focus:active, .btn:focus.active, .haiku-share__add:focus.active {
   -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.2) inset;
   -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.2) inset;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.2) inset;
@@ -8504,6 +8514,40 @@ html.flexbox {
 .btn--transparent {
   background: none btn--transparent;
   border: none;
+}
+
+/* line 50, ../../styles/ui/_buttons.scss */
+.btn--mini {
+  font-size: 10px;
+}
+
+/* line 6, ../../styles/ui/_form.scss */
+.input-text, .haiku-share__add-input {
+  -webkit-appearance: none;
+  color: #161927;
+  border-radius: 4px;
+  background-color: #fefefe;
+  border: 1px solid #cacfd4;
+  line-height: 2;
+  padding: 0 1em 1px;
+  transition: .3s all;
+  font-size: 14px;
+}
+/* line 17, ../../styles/ui/_form.scss */
+.input-text:focus, .haiku-share__add-input:focus {
+  outline: none;
+  border-color: #049cdb;
+  background-color: #fefefe;
+  -webkit-box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
+  -moz-box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
+  box-shadow: 0 0 0 5px rgba(4, 156, 219, 0.3);
+}
+
+/* line 26, ../../styles/ui/_form.scss */
+.input-text--huge {
+  font-size: 32px;
+  text-align: center;
+  letter-spacing: 2px;
 }
 
 /* line 10, ../../styles/ui/_haiku.scss */
@@ -8581,20 +8625,21 @@ html.flexbox {
   -ms-transform: translate3d(0, 0, 0);
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
 }
 
-/* line 16, ../../styles/ui/haiku/_slides.scss */
+/* line 17, ../../styles/ui/haiku/_slides.scss */
 .haiku__slide-content {
   max-width: 40em;
   margin: 2em auto;
 }
 
-/* line 21, ../../styles/ui/haiku/_slides.scss */
+/* line 22, ../../styles/ui/haiku/_slides.scss */
 .haiku__slide--current {
   transition-duration: 0.405s;
 }
 
-/* line 24, ../../styles/ui/haiku/_slides.scss */
+/* line 25, ../../styles/ui/haiku/_slides.scss */
 .haiku__slide--next {
   -webkit-transform: translate3d(0, 100%, 0);
   -moz-transform: translate3d(0, 100%, 0);
@@ -8603,7 +8648,7 @@ html.flexbox {
   transform: translate3d(0, 100%, 0);
 }
 
-/* line 28, ../../styles/ui/haiku/_slides.scss */
+/* line 29, ../../styles/ui/haiku/_slides.scss */
 .haiku__slide--prev {
   -webkit-transform: translate3d(0, -100%, 0);
   -moz-transform: translate3d(0, -100%, 0);
@@ -8614,7 +8659,6 @@ html.flexbox {
 
 /* line 3, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav {
-  position: fixed;
   text-align: center;
   bottom: 0;
   left: 0;
@@ -8623,43 +8667,55 @@ html.flexbox {
   transition: .3s all;
 }
 
-/* line 13, ../../styles/ui/haiku/_nav.scss */
+/* line 12, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav--hidden {
   opacity: 0;
   visibility: hidden;
   margin-right: -300px;
 }
 
-/* line 19, ../../styles/ui/haiku/_nav.scss */
+/* line 18, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__categories {
   list-style: none;
   padding: 0;
   margin: 0;
   display: block;
-  text-align: right;
+  text-align: center;
   width: 100%;
+  position: absolute;
+  bottom: 10px;
 }
 
-/* line 28, ../../styles/ui/haiku/_nav.scss */
+/* line 29, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__category {
   display: inline-block;
   vertical-align: top;
+  margin: 0 .5em;
 }
 
-/* line 37, ../../styles/ui/haiku/_nav.scss */
+/* line 39, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__slides {
   list-style: none;
   padding: 0;
   margin: 0;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+  line-height: 1.5em;
 }
 
-/* line 44, ../../styles/ui/haiku/_nav.scss */
+/* line 50, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__slide {
   display: block;
   padding: 0 10px;
 }
 
-/* line 49, ../../styles/ui/haiku/_nav.scss */
+/* line 57, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button {
   vertical-align: middle;
   border: none;
@@ -8670,48 +8726,64 @@ html.flexbox {
   border: 2px solid rgba(0, 0, 0, 0.3);
   background-color: transparent;
   opacity: .8;
-  -webkit-transition: 0.4s all;
-  -moz-transition: 0.4s all;
-  -o-transition: 0.4s all;
-  transition: 0.4s all;
+  -webkit-transition: 0.25s all;
+  -moz-transition: 0.25s all;
+  -o-transition: 0.25s all;
+  transition: 0.25s all;
+  margin-top: 1em;
 }
-/* line 62, ../../styles/ui/haiku/_nav.scss */
+/* line 71, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button:focus {
   -webkit-outline: none;
   outline: none;
 }
-/* line 67, ../../styles/ui/haiku/_nav.scss */
+/* line 76, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button:active {
   box-shadow: 0 0 10px 40px rgba(0, 0, 0, 0.5);
 }
+@media all and (max-width: 1024px) {
+  /* line 57, ../../styles/ui/haiku/_nav.scss */
+  .haiku-nav__button {
+    width: 28px;
+    height: 28px;
+    border-radius: 28px;
+  }
+}
 
-/* line 73, ../../styles/ui/haiku/_nav.scss */
+/* line 91, ../../styles/ui/haiku/_nav.scss */
 .haiku-nav__button--active {
   background-color: rgba(0, 0, 0, 0.5);
   border: none transparent;
 }
 
-/* line 80, ../../styles/ui/haiku/_nav.scss */
-.haiku__close-btn {
-  position: fixed;
-  top: 10px;
+/* line 101, ../../styles/ui/haiku/_nav.scss */
+.haiku-nav__tools {
+  position: absolute;
   right: 10px;
+  top: 10px;
+  width: 32px;
+  text-align: right;
+}
+
+/* line 111, ../../styles/ui/haiku/_nav.scss */
+.haiku__share-btn, .haiku__remote-btn, .haiku__close-btn {
   width: 32px;
   height: 32px;
-  border-radius: 32px;
   display: block;
   padding: 0;
   line-height: 30px;
-  border: 2px solid rgba(254, 254, 254, 0.5);
+  border: none;
   background: rgba(0, 0, 0, 0.1);
   color: rgba(254, 254, 254, 0.5);
+  margin-bottom: 0;
+  font-size: 18px;
 }
-/* line 100, ../../styles/ui/haiku/_nav.scss */
-.haiku__close-btn:focus {
+/* line 130, ../../styles/ui/haiku/_nav.scss */
+.haiku__share-btn:focus, .haiku__remote-btn:focus, .haiku__close-btn:focus {
   outline: none;
 }
-/* line 104, ../../styles/ui/haiku/_nav.scss */
-.haiku__close-btn:active {
+/* line 134, ../../styles/ui/haiku/_nav.scss */
+.haiku__share-btn:active, .haiku__remote-btn:active, .haiku__close-btn:active {
   background-color: #fefefe;
   color: black;
 }
@@ -8723,25 +8795,70 @@ html.flexbox {
   font-weight: 100;
 }
 
+/* line 1, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__emails {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+  height: 160px;
+  border-radius: 15px;
+  background: #fdfbfa;
+  text-align: left;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+}
+
+/* line 14, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__email {
+  cursor: default;
+  padding: 0 0 1px 1em;
+  margin: 0 .5em .5em 0;
+  background-color: rgba(122, 67, 182, 0.2);
+  border-radius: 10px;
+  line-height: 30px;
+  font-size: 14px;
+  color: #7a43b6;
+  display: inline-block;
+  position: relative;
+  -webkit-animation: fadeInLeft 0.3s;
+  -moz-animation: fadeInLeft 0.3s;
+  -ms-animation: fadeInLeft 0.3s;
+  -o-animation: fadeInLeft 0.3s;
+  animation: fadeInLeft 0.3s;
+}
+
+/* line 35, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__add-input {
+  margin-right: 1em;
+  width: 50%;
+}
+
+/* line 41, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__remove {
+  background: transparent;
+  border: none;
+  color: #161927;
+  margin-right: 0;
+}
+
 /* line 3, ../../styles/ui/_drop.scss */
 .ppk-drop__box {
   width: 100%;
   height: 100%;
   position: absolute;
-  background-color: #e74c3c;
   transition: .3s all;
 }
-/* line 11, ../../styles/ui/_drop.scss */
+/* line 13, ../../styles/ui/_drop.scss */
 .ppk-drop__box i {
   pointer-events: none;
-  color: #cacfd4;
+  color: #7f748c;
   font-size: 96px;
   width: 96px;
   height: 96px;
   transition: .3s all ease-out 0;
   margin-bottom: 20px;
 }
-/* line 23, ../../styles/ui/_drop.scss */
+/* line 25, ../../styles/ui/_drop.scss */
 .ppk-drop__box .ppk-drop__input--polyfill {
   opacity: 0;
   position: absolute;
@@ -8754,23 +8871,24 @@ html.flexbox {
   z-index: 2;
   visibility: visible;
 }
-/* line 41, ../../styles/ui/_drop.scss */
-.ppk-drop__box.is-file-over {
-  background-color: #2ecc71;
-}
 /* line 43, ../../styles/ui/_drop.scss */
+.ppk-drop__box.is-file-over {
+  background-color: rgba(127, 116, 140, 0.8);
+}
+/* line 45, ../../styles/ui/_drop.scss */
 .ppk-drop__box.is-file-over i {
   opacity: 1;
+  color: #fefefe;
   -webkit-transform: translate(-50%, -50%) rotate(180deg);
 }
 
-/* line 51, ../../styles/ui/_drop.scss */
+/* line 54, ../../styles/ui/_drop.scss */
 .ppk-drop__input {
   opacity: 0;
   visibility: hidden;
 }
 
-/* line 57, ../../styles/ui/_drop.scss */
+/* line 60, ../../styles/ui/_drop.scss */
 .ppk-drop__info {
   width: 96px;
   height: 96px;
@@ -8780,7 +8898,7 @@ html.flexbox {
   -webkit-transform: translate(-50%, -50%);
 }
 
-/* line 66, ../../styles/ui/_drop.scss */
+/* line 69, ../../styles/ui/_drop.scss */
 .ppk-drop__upload-btn {
   border: 2px solid #fefefe;
   border-radius: 5px;
@@ -8789,37 +8907,118 @@ html.flexbox {
   color: #fefefe;
   line-height: 2em;
 }
-/* line 74, ../../styles/ui/_drop.scss */
+/* line 77, ../../styles/ui/_drop.scss */
 .ppk-drop__upload-btn:active {
   background: #fefefe;
   color: #e74c3c;
 }
-/* line 79, ../../styles/ui/_drop.scss */
+/* line 82, ../../styles/ui/_drop.scss */
 .ppk-drop__upload-btn:focus {
   outline: none;
 }
 
-/* line 20, ../../styles/app.scss */
+/* line 2, ../../styles/ui/_notify.scss */
+.toast {
+  -webkit-animation: fadeInLeft 0.45s cubic-bezier(0.1, 0.7, 0.1, 1) 0 both;
+  -moz-animation: fadeInLeft 0.45s cubic-bezier(0.1, 0.7, 0.1, 1) 0 both;
+  -ms-animation: fadeInLeft 0.45s cubic-bezier(0.1, 0.7, 0.1, 1) 0 both;
+  -o-animation: fadeInLeft 0.45s cubic-bezier(0.1, 0.7, 0.1, 1) 0 both;
+  animation: fadeInLeft 0.45s cubic-bezier(0.1, 0.7, 0.1, 1) 0 both;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 14px;
+  min-width: 200px;
+  border-radius: 5px;
+}
+
+/* line 11, ../../styles/ui/_notify.scss */
+.toast-title {
+  font-weight: 300;
+  font-size: 18px;
+}
+
+/* line 17, ../../styles/ui/_notify.scss */
+#toast-container > div {
+  box-shadow: none;
+  border-radius: none;
+}
+
+/* line 22, ../../styles/ui/_notify.scss */
+.toast-info {
+  background-color: #fefefe;
+  border: 1px solid #fdfbfa;
+}
+
+/* line 27, ../../styles/ui/_notify.scss */
+#toast-container {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+/* line 32, ../../styles/ui/_notify.scss */
+#toast-container > .toast-info, #toast-container > .toast-error, #toast-container > .toast-success {
+  background-image: none;
+}
+
+/* line 3, ../../styles/ui/_modal.scss */
+.modal {
+  position: absolute;
+  padding: 30px;
+  width: 100%;
+  top: 50%;
+  margin-top: -200px;
+  background-color: #fefefe;
+  -webkit-animation: fadeInUp 0.3s ease 0s both;
+  -moz-animation: fadeInUp 0.3s ease 0s both;
+  -ms-animation: fadeInUp 0.3s ease 0s both;
+  -o-animation: fadeInUp 0.3s ease 0s both;
+  animation: fadeInUp 0.3s ease 0s both;
+}
+/* line 16, ../../styles/ui/_modal.scss */
+.modal .btn, .modal .haiku-share__add {
+  margin-right: 1em;
+}
+
+/* line 22, ../../styles/ui/_modal.scss */
+.modal__title, .modal__body, .modal__footer {
+  margin: 0 auto 1.6rem;
+  max-width: 640px;
+}
+
+/* line 49, ../../styles/ui/_modal.scss */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* line 26, ../../styles/app.scss */
 *, *::after, *::before {
   box-sizing: border-box;
 }
 
-/* line 24, ../../styles/app.scss */
+/* line 30, ../../styles/app.scss */
 html {
   overflow: hidden;
 }
 
-/* line 27, ../../styles/app.scss */
+/* line 33, ../../styles/app.scss */
 body {
   user-select: none;
   -webkit-user-select: none;
   font-family: "Segoe UI Light", "Helvetica Neue", sans-serif;
-  background: url(http://cdn2.dribbble.com/assets/noise-f1-99be850299aaf3f1e91225fa7a97228c.gif);
+  background: url("../img/bg.jpg");
+  background-size: cover;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.001);
 }
 
-/* line 34, ../../styles/app.scss */
+/* line 44, ../../styles/app.scss */
 .viewport {
-  padding: 30px;
+  padding: 0;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -8828,7 +9027,7 @@ body {
   overflow: hidden;
 }
 
-/* line 44, ../../styles/app.scss */
+/* line 54, ../../styles/app.scss */
 .intro-wrapper {
   position: absolute;
   top: 0;
@@ -8837,7 +9036,7 @@ body {
   left: 0;
 }
 
-/* line 59, ../../styles/app.scss */
+/* line 69, ../../styles/app.scss */
 .debug {
   position: fixed;
   top: 10px;

@@ -1,0 +1,15 @@
+
+<div class="modal__title">
+  <h2>Get Remote Control URL</h2>
+</div>
+<div class="modal__body">
+  <form name="form" class="form">
+    <div class="form-item">
+      <input name="modalEmail" type="email" placeholder="Type your email here" ng-model="result.email" required="required" class="input-text input-text--huge"/>
+    </div>
+  </form>
+</div>
+<div class="modal__footer">
+  <button ng-disabled="form.modalEmail.$invalid" ng-click="ok()" class="btn btn--positive">Ok, send.</button>
+  <button ng-click="cancel()" class="btn btn--negative">Cancel</button>
+</div>

@@ -1,0 +1,18 @@
+
+<div ng-class=" { 'haiku-nav--hidden' : !visible } " class="haiku-nav">
+  <div class="haiku-nav__tools">
+    <button ng-show="clientRole == 'host'" h-tap="close()" class="haiku__close-btn"><i></i></button>
+    <button ng-show="clientRole == 'host'" h-tap="enableRemote()" class="haiku__remote-btn"><i></i></button>
+    <button h-tap="share()" class="haiku__share-btn"><i></i></button>
+  </div>
+  <ol ng-show="categories.length &gt; 1" class="haiku-nav__categories">
+    <li ng-repeat="category in categories" ng-class="{ 'haiku-nav__category--current' : currentCategory == isCurrentCategory(category) }" class="haiku-nav__category">
+      <button ng-class="{'haiku-nav__button--active': isCurrentCategory(category)}" h-tap="goto({index: 0, categoryIndex: $index})" class="haiku-nav__button"></button>
+    </li>
+  </ol>
+  <ol ng-show="categories[categories.currentCategory].slides.length &gt; 1" class="haiku-nav__slides">
+    <li ng-repeat="slide in categories[categories.currentCategory].slides" class="haiku-nav__slide">
+      <button ng-class="{'haiku-nav__button--active': isCurrentSlide(slide)}" h-tap="goto(slide)" class="haiku-nav__button"></button>
+    </li>
+  </ol>
+</div>

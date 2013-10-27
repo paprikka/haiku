@@ -1,0 +1,25 @@
+
+<div class="modal__title">
+  <h2>Share a haiku</h2>
+</div>
+<div class="modal__body">
+  <ul class="haiku-share__emails">
+    <li ng-show="!emails.length">
+      <div class="beta">Boooo</div>
+      <p>No one's invited to the party :(</p>
+    </li>
+    <li ng-repeat="email in emails" class="haiku-share__email"><span>{{email}}</span>
+      <button ng-click="remove(email)" tabindex="-1" class="haiku-share__remove">&times;</button>
+    </li>
+  </ul>
+  <form name="form" novalidate="novalidate" ng-submit="add(newEmail.value)" class="form">
+    <div class="form-item">
+      <input name="modalEmail" type="email" placeholder="Add new email..." ng-model="newEmail.value" required="required" class="haiku-share__add-input"/>
+      <button ng-disabled="form.modalEmail.$invalid" ng-click="add(newEmail.value)" class="haiku-share__add">Add</button>
+    </div>
+  </form>
+</div>
+<div class="modal__footer">
+  <button ng-disabled="!emails.length" ng-click="ok()" class="btn btn--positive">Ok, send.</button>
+  <button ng-click="cancel()" class="btn btn--negative">Cancel</button>
+</div>
