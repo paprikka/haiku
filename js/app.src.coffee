@@ -181,7 +181,6 @@ angular.module('pl.paprikka.directives.drop', [])
       scope.handleUpload = (dt)->
         if dt.files?[0]
           type = getFileType dt.files[0]            
-
           if type is 'text'
             getTextFiles dt.files[0], scope.onDrop
           if type is 'images'

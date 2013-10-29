@@ -6993,7 +6993,7 @@ html.flexbox {
  * Positive actions; e.g. sign in, purchase, submit, etc.
  */
 /* line 179, ../../vendor/inuit.css/objects/_beautons.scss */
-.btn--positive {
+.btn--positive, .haiku-share__add {
   background-color: #4A993E;
   color: #fff;
 }
@@ -8495,7 +8495,7 @@ html.flexbox {
 }
 
 /* line 30, ../../styles/ui/_buttons.scss */
-.btn--positive {
+.btn--positive, .haiku-share__add {
   background-color: #2ecc71;
 }
 
