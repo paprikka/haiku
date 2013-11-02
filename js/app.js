@@ -360,7 +360,7 @@ angular.module('pl.paprikka.haiku.controllers.view', []).controller('HaikuViewCt
       $location.path('/');
     }
     Remote.join($routeParams.roomID);
-    return $rootScope.$on('haiku:room:joined', function(scope, data) {
+    $rootScope.$on('haiku:room:joined', function(scope, data) {
       Remote.broadcastJoinedGuest(data.room);
       return $scope.$apply(function() {
         var showUI;
@@ -372,6 +372,7 @@ angular.module('pl.paprikka.haiku.controllers.view', []).controller('HaikuViewCt
         return $timeout(showUI, 2000);
       });
     });
+    return $scope.navVisible = true;
   }
 ]);
 

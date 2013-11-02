@@ -418,22 +418,23 @@ angular.module('pl.paprikka.haiku.controllers.view', [
     $rootScope.$on 'haiku:room:joined', (scope, data) ->
       Remote.broadcastJoinedGuest data.room
       $scope.$apply ->
-        $rootScope.categories = data.categories    
+        $rootScope.categories = data.categories
         $scope.status = 'ready'
-        
+
         showUI = ->
           $scope.UIReady = yes
 
         $timeout showUI, 2000
 
-    
 
 
 
 
-    # $scope.navVisible = yes
+
+    $scope.navVisible = yes
 
 ])
+
 angular.module('pl.paprikka.directives.haiku.hTap', []).directive('hTap', [
   -> 
     link: (scope, elm, attrs) ->
