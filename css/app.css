@@ -8598,9 +8598,10 @@ html.flexbox {
   list-style: none;
   padding: 0;
   margin: 0;
+  background-color: #505155;
 }
 
-/* line 9, ../../styles/ui/haiku/_categories.scss */
+/* line 10, ../../styles/ui/haiku/_categories.scss */
 .haiku__category {
   -webkit-transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
   -moz-transition: 0.45s all cubic-bezier(0.1, 0.7, 0.1, 1);
@@ -8613,7 +8614,7 @@ html.flexbox {
   transform: translate3d(0, 0, 0);
 }
 
-/* line 15, ../../styles/ui/haiku/_categories.scss */
+/* line 16, ../../styles/ui/haiku/_categories.scss */
 .haiku__category--prev {
   -webkit-transform: translate3d(-100%, 0, 0);
   -moz-transform: translate3d(-100%, 0, 0);
@@ -8622,7 +8623,7 @@ html.flexbox {
   transform: translate3d(-100%, 0, 0);
 }
 
-/* line 19, ../../styles/ui/haiku/_categories.scss */
+/* line 20, ../../styles/ui/haiku/_categories.scss */
 .haiku__category--next {
   -webkit-transform: translate3d(100%, 0, 0);
   -moz-transform: translate3d(100%, 0, 0);
@@ -8631,7 +8632,7 @@ html.flexbox {
   transform: translate3d(100%, 0, 0);
 }
 
-/* line 23, ../../styles/ui/haiku/_categories.scss */
+/* line 24, ../../styles/ui/haiku/_categories.scss */
 .haiku__category--current {
   transition-duration: 0.315s;
 }

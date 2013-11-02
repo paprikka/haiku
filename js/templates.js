@@ -1,4 +1,4 @@
-angular.module('templates', ['common/partials/modal-prompt.html', 'drop/drop.html', 'haiku/partials/directives/nav.html', 'haiku/partials/haiku-import.html', 'haiku/partials/haiku.html', 'haiku/partials/modals/send-remote-url.html', 'haiku/partials/modals/share.html', 'haiku/partials/views/import.html', 'haiku/partials/views/play.html', 'haiku/partials/views/view.html', 'head.html', 'index.html', 'pages/404.html', 'pages/partials/intro.html']);
+angular.module('templates', ['common/partials/modal-prompt.html', 'drop/drop.html', 'haiku/partials/directives/nav.html', 'haiku/partials/haiku-import.html', 'haiku/partials/haiku.html', 'haiku/partials/modals/close.html', 'haiku/partials/modals/send-remote-url.html', 'haiku/partials/modals/share.html', 'haiku/partials/views/import.html', 'haiku/partials/views/play.html', 'haiku/partials/views/view.html', 'head.html', 'index.html', 'pages/404.html', 'pages/partials/intro.html']);
 
 angular.module("common/partials/modal-prompt.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("common/partials/modal-prompt.html",
@@ -65,6 +65,19 @@ angular.module("haiku/partials/haiku.html", []).run(["$templateCache", function(
     "</div>");
 }]);
 
+angular.module("haiku/partials/modals/close.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("haiku/partials/modals/close.html",
+    "\n" +
+    "<div class=\"modal__title\">\n" +
+    "  <h2>Confirm</h2>\n" +
+    "</div>\n" +
+    "<div class=\"modal__body\">Do you really want to go back to upload and remove this haiku?</div>\n" +
+    "<div class=\"modal__footer\">\n" +
+    "  <button ng-click=\"ok()\" class=\"btn btn--positive\">Ok, close.</button>\n" +
+    "  <button ng-click=\"cancel()\" class=\"btn btn--negative\">No, stay here.</button>\n" +
+    "</div>");
+}]);
+
 angular.module("haiku/partials/modals/send-remote-url.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/modals/send-remote-url.html",
     "\n" +
@@ -120,7 +133,7 @@ angular.module("haiku/partials/modals/share.html", []).run(["$templateCache", fu
 angular.module("haiku/partials/views/import.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/views/import.html",
     "\n" +
-    "<div class=\"haiku-import\"><a href=\"examples/categories.md\" target=\"_blank\" download=\"drag me to the browser window.md\" class=\"import__example\">Get example haiku</a>\n" +
+    "<div class=\"haiku-import\"><a href=\"examples/categories.md\" target=\"_blank\" download=\"Drag me to the browser window.md\" ng-show=\"mdSupported\" class=\"import__example\">Get example haiku</a>\n" +
     "  <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
     "</div>");
 }]);
@@ -198,10 +211,6 @@ angular.module("head.html", []).run(["$templateCache", function($templateCache) 
     "  </script><!--[if lte IE 8]>\n" +
     "  <script src=\"//html5shiv.googlecode.com/svn/trunk/html5.js\"></script><![endif]-->\n" +
     "  <script src=\"js/modernizr.js\"></script>\n" +
-    "  <script src=\"//haiku-hub.herokuapp.com/socket.io/socket.io.js\"></script>\n" +
-    "  <script src=\"js/vendor.js\"></script>\n" +
-    "  <script src=\"js/templates.js\"></script>\n" +
-    "  <script src=\"js/app.js\"></script>\n" +
     "</head>");
 }]);
 
@@ -250,21 +259,30 @@ angular.module("index.html", []).run(["$templateCache", function($templateCache)
     "    </script><!--[if lte IE 8]>\n" +
     "    <script src=\"//html5shiv.googlecode.com/svn/trunk/html5.js\"></script><![endif]-->\n" +
     "    <script src=\"js/modernizr.js\"></script>\n" +
-    "    <script src=\"//haiku-hub.herokuapp.com/socket.io/socket.io.js\"></script>\n" +
-    "    <script src=\"js/vendor.js\"></script>\n" +
-    "    <script src=\"js/templates.js\"></script>\n" +
-    "    <script src=\"js/app.js\"></script>\n" +
     "  </head>\n" +
     "  <body ng-controller=\"AppCtrl\" ng-app=\"app\" id=\"ng-app\">\n" +
     "    <div class=\"viewport\">\n" +
     "      <div ng-view class=\"viewport__content\"></div>\n" +
     "    </div>\n" +
+    "    <script src=\"@@hubURL/socket.io/socket.io.js\"></script>\n" +
     "    <script>\n" +
-    "      $('body').on('touchmove', function (e) {\n" +
-    "         if (!$('.scrollable').has($(e.target)).length) e.preventDefault();\n" +
-    "      });\n" +
+    "      window.haiku = {\n" +
+    "        config: {\n" +
+    "          hubURL: '@@hubURL'\n" +
+    "        }\n" +
+    "      }\n" +
     "      \n" +
     "    </script>\n" +
+    "    <script src=\"js/vendor.js\"></script>\n" +
+    "    <script>\n" +
+    "      $(function(){\n" +
+    "        $('body').on('touchmove', function (e) {\n" +
+    "           if (!$('.scrollable').has($(e.target)).length) e.preventDefault();\n" +
+    "        });\n" +
+    "      });\n" +
+    "    </script>\n" +
+    "    <script src=\"js/templates.js\"></script>\n" +
+    "    <script src=\"js/app.js\"></script>\n" +
     "    <script>\n" +
     "      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n" +
     "      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n" +

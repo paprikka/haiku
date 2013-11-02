@@ -71,6 +71,24 @@ angular.module('app.common.services.Notify', []).factory 'Notify', ->
   toastr.options.positionClass = 'toast-bottom-right'
   toastr.options.hideDuration = 2
   window.toastr
+angular.module('app.common.services.pageState', []).service( 'PageState', [
+
+  '$window'
+
+  ( $window ) ->
+    class PageState
+      enable : ->
+        if location.hostname is 'localhost' or location.hostname.split('.')[0] is '192' then return # disable in dev environment
+        $window.onbeforeunload = ->
+          'Do you really want to leave and remove your haiku?'
+
+      disable : ->
+        $window.onbeforeunload = null
+
+    new PageState
+
+])
+
 angular.module('app.common.webSockets', []).service('WebSockets', [
   '$window'
   ($window)->
@@ -183,9 +201,12 @@ angular.module('pl.paprikka.directives.drop', [])
           type = getFileType dt.files[0]            
           if type is 'text'
             getTextFiles dt.files[0], scope.onDrop
-          if type is 'images'
+          else if type is 'images'
             getImageFiles dt.files, scope.onDrop
-      
+          # TODO: add unsupported format message
+          # else
+          #   $window.alert 'Please insert Markdown or images'
+
       scope.supportsUploadClickDelegation = !!$window.navigator.userAgent.match(/(iPod|iPhone|iPad)/) && $window.navigator.userAgent.match(/AppleWebKit/)
 
 
@@ -202,6 +223,7 @@ angular.module('pl.paprikka.haiku', [
 
   'ngSanitize'
   
+  'app.common.services.pageState'
   'pl.paprikka.directives.haiku'
   'pl.paprikka.directives.drop'
   'pl.paprikka.haiku.directives.nav'
@@ -231,6 +253,8 @@ angular.module('pl.paprikka.haiku.controllers.import', [
   ( Importer, $location, $rootScope, $scope, Remote, Modal, Notify )->
     $rootScope.categories   = []
     $scope.files            = []
+
+    $scope.mdSupported = if navigator.userAgent.match /(iPad|iPhone|iPod)/g then no else yes
 
     $rootScope.$on 'haiku:room:accepted', (e, data) ->
       $rootScope.clientRole = 'host'
@@ -270,10 +294,14 @@ angular.module('pl.paprikka.haiku.controllers.play', [
   '$scope'
   '$timeout'
   'Remote'
+  'Slides'
   'Modal'
   'Notify'
+  'PageState'
 
-  ( $location, $routeParams, $rootScope, $scope, $timeout, Remote, Modal, Notify )->
+  ( $location, $routeParams, $rootScope, $scope, $timeout, Remote, Slides, Modal, Notify, PageState )->
+
+    PageState.enable()
 
     showUI = ->
       $scope.UIReady = yes
@@ -286,8 +314,11 @@ angular.module('pl.paprikka.haiku.controllers.play', [
 
     $rootScope.$on 'haiku:remote:URLSent', ->
       Notify.info 'Remote bookmark sent.'
-          
+
     $rootScope.$on 'haiku:room:remoteJoined', ->
+      console.log 'Haiku::Remote joined, sending current status...'
+      $scope.updateStatus Slides.package $scope.categories
+      # $scope.updateStatus $scope.status
       Notify.info 'Remote connected.'
 
     $rootScope.$on 'haiku:room:guestJoined', ->
@@ -296,17 +327,17 @@ angular.module('pl.paprikka.haiku.controllers.play', [
 
     $scope.updateStatus = (data)->
       Remote.sendUpdates data, $routeParams.roomID
-    
+
 
 
     # TODO: move to Modal.prompt service
     sendCtrl = ($scope, $modalInstance) ->
       $scope.result = {}
-      $scope.ok = -> 
+      $scope.ok = ->
         $modalInstance.close $scope.result.email
       $scope.cancel = -> $modalInstance.dismiss 'cancel'
-    
-    
+
+
 
     $scope.sendRemoteURL = ->
       modalInstance = Modal.open
@@ -331,17 +362,17 @@ angular.module('pl.paprikka.haiku.controllers.play', [
           $scope.emails.push email
           $scope.newEmail.value = ''
 
-      
+
       $scope.remove = (email) ->
         $scope.emails = _.filter $scope.emails, (em)-> em isnt email
-      
-      
-      $scope.ok = -> 
+
+
+      $scope.ok = ->
         $modalInstance.close $scope.emails
 
       $scope.cancel = -> $modalInstance.dismiss 'cancel'
-    
-    
+
+
 
     $scope.shareURL = ->
       modalInstance = Modal.open
@@ -352,10 +383,14 @@ angular.module('pl.paprikka.haiku.controllers.play', [
         console.log   emails
         Remote.shareURL $routeParams.roomID, emails
 
+
+
+
     $location.path('/') unless $rootScope.categories?.length
     $scope.navVisible = yes
 
 ])
+
 angular.module('pl.paprikka.haiku.controllers.view', [
 
   # 'pl.paprikka.haiku.directives.nav'
@@ -456,7 +491,7 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
 
         scope.isFirstCategory   = no
         scope.isFirstSlide      = no
-        
+
       initSettings scope
 
       scope.$watch 'categories.length', (n,o) ->
@@ -511,26 +546,26 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
         unless scope.isLastSlide
           scope.categories.currentSlide = scope.categories.currentSlide + 1
 
-      scope.$watch 'categories.currentCategory', scope.updatePosition      
-      scope.$watch 'categories.currentSlide', scope.updatePosition 
+      scope.$watch 'categories.currentCategory', scope.updatePosition
+      scope.$watch 'categories.currentSlide', scope.updatePosition
 
 
-      Hammer(elm).on 'swipeleft',  (e)-> 
+      Hammer(elm).on 'swipeleft',  (e)->
         e.gesture.srcEvent.preventDefault();
         scope.$apply scope.nextCategory
         off
 
-      Hammer(elm).on 'swiperight', (e)-> 
+      Hammer(elm).on 'swiperight', (e)->
         e.gesture.srcEvent.preventDefault();
         scope.$apply scope.prevCategory
         off
 
-      Hammer(elm).on 'swipeup',    (e)-> 
+      Hammer(elm).on 'swipeup',    (e)->
         e.gesture.srcEvent.preventDefault();
         scope.$apply scope.nextSlide
         off
 
-      Hammer(elm).on 'swipedown',  (e)-> 
+      Hammer(elm).on 'swipedown',  (e)->
         e.gesture.srcEvent.preventDefault();
         scope.$apply scope.prevSlide
         off
@@ -547,7 +582,7 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
         # e.stopImmediatePropagation()
         # no
 
-      
+
       onMouseWheel = (e) ->
         delta = e.originalEvent.wheelDelta
         treshold = 100
@@ -556,33 +591,38 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
             scope.nextSlide()
           if delta > treshold
             scope.prevSlide()
-      
-      
+
+
 
       $($window).on 'keydown', onKeyDown
       $($window).on 'mousewheel', onMouseWheel
 
       $rootScope.$on 'haiku:remote:control', (e, data) ->
+
         scope.$apply ->
-          switch data.params?.direction
-            when 'up'    then scope.prevSlide()
-            when 'down'  then scope.nextSlide()
-            when 'left'  then scope.prevCategory()
-            when 'right' then scope.nextCategory()
-      
+          if data.command is 'position'
+            scope.goto
+              index: data.params.currentSlide, categoryIndex: data.params.currentCategory
+
+          # switch data.params?.direction
+          #   when 'up'    then scope.prevSlide()
+          #   when 'down'  then scope.nextSlide()
+          #   when 'left'  then scope.prevCategory()
+          #   when 'right' then scope.nextCategory()
+
 
 
       scope.$on 'haiku:goto', (slide) ->
         scope.goto slide
-      
+
       scope.$on 'haiku:goto', (slide) ->
         scope.goto slide
-      
+
       $rootScope.$on 'haiku:remote:goto', (e, slide)-> scope.goto slide
 
       scope.getCategoryClass = (category) ->
         'haiku__category--' + (category.status or 'prev')
-      
+
       scope.getSlideClass = (slide) ->
         'haiku__slide--' + (slide.status or 'prev')
 
@@ -600,12 +640,13 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
       # TODO: extend theming support
       scope.getThemeClass = -> 'haiku--default'
 
-      
-          
 
-     # TODO: move to a subdirective     
-     
+
+
+     # TODO: move to a subdirective
+
 ])
+
 angular.module('pl.paprikka.haiku.directives.nav', [
   'pl.paprikka.haiku.services.slides'
 ]).directive('haikuNav', [
@@ -613,14 +654,15 @@ angular.module('pl.paprikka.haiku.directives.nav', [
   '$rootScope'
   '$location'
   'Slides'
+  'Modal'
 
-  ( $rootScope, $location, Slides )->
+  ( $rootScope, $location, Slides, Modal )->
     scope:
-      categories: '='
-      visible:    '='
-      control:    '&navControl'
-      enableRemote: '&onEnableRemote'
-      share:        '&onShare'
+      categories:    '='
+      visible:       '='
+      control:       '&navControl'
+      enableRemote:  '&onEnableRemote'
+      share:         '&onShare'
     restrict:     'AE'
     replace:      yes
     templateUrl:  'haiku/partials/directives/nav.html'
@@ -638,7 +680,21 @@ angular.module('pl.paprikka.haiku.directives.nav', [
       scope.isCurrentSlide = (slide)-> 
         Slides.isCurrentSlide slide, scope.categories
 
-      scope.close = -> $location.path '/'
+
+      # TODO: move to Modal.prompt service
+      closeCtrl = ($scope, $modalInstance) ->
+        $scope.ok = -> 
+          $modalInstance.close yes
+        $scope.cancel = -> $modalInstance.dismiss 'cancel'
+    
+      scope.close = -> 
+        modalInstance = Modal.open
+          templateUrl: 'haiku/partials/modals/close.html'
+          controller: closeCtrl
+
+        modalInstance.result.then (result) ->
+          if result
+            $location.path '/'
 
 ])
 angular.module('pl.paprikka.services.hammerjs', []).factory('Hammer', [
@@ -765,9 +821,7 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
   '$rootScope'
   ( WebSockets, $rootScope) ->
     console.log 'Remote::init'
-    HUB_LOCATION = 'http://haiku-hub.herokuapp.com:80'
-    SOCKET_LOCATION = if location.hostname.split('.')[0] is '192' then location.hostname + ':8082' else HUB_LOCATION
-
+    SOCKET_LOCATION = haiku.config.hubURL
     socket = WebSockets.connect SOCKET_LOCATION
 
     socket.on 'connect', ->
@@ -775,11 +829,11 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
       socket.on 'remote', (data) ->
         $rootScope.$emit 'haiku:remote:control', data
 
-      socket.on 'room:remoteJoined', (data)->
-        $rootScope.$emit 'haiku:room:remoteJoined', data
+      socket.on 'room:remoteJoined', _.throttle ((data)->
+        $rootScope.$emit 'haiku:room:remoteJoined', data), 100
 
-      socket.on 'room:guestJoined', (data)->
-        $rootScope.$emit 'haiku:room:guestJoined', data
+      socket.on 'room:guestJoined', _.throttle ((data)->
+        $rootScope.$emit 'haiku:room:guestJoined', data), 100
 
       socket.on 'room:accepted', (data)->
         $rootScope.$emit 'haiku:room:accepted', data
@@ -794,13 +848,13 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
         $rootScope.$emit 'haiku:remote:URLShared', data
 
 
-    
+
     Remote =
-      join : (room) -> 
+      join : (room) ->
         socket.emit 'room:join', { room: room }
-      leave : (room, cb) -> 
+      leave : (room, cb) ->
         socket.emit 'room:leave', { room: room }
-      request : (categories) -> 
+      request : (categories) ->
         socket.emit 'room:request', { categories: categories }
       sendRemoteURL : (room, to) ->
         socket.emit 'remote:sendURL', { room, to }
@@ -808,13 +862,14 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
         socket.emit 'remote:shareURL', { room, to }
       broadcastJoinedGuest: (room) ->
         socket.emit 'remote:guestJoined', { room }
-      
-            
-      
+
+
+
       sendUpdates: (data, room)->
         console.log 'haiku::update', data, room, socket
         socket.emit 'remote:update', {data, room}
 ])
+
 angular.module('pl.paprikka.haiku.services.slides', []).factory('Slides',[ ->
 
 

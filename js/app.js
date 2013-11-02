@@ -72,6 +72,32 @@ angular.module('app.common.services.Notify', []).factory('Notify', function() {
   return window.toastr;
 });
 
+angular.module('app.common.services.pageState', []).service('PageState', [
+  '$window', function($window) {
+    var PageState;
+    PageState = (function() {
+      function PageState() {}
+
+      PageState.prototype.enable = function() {
+        if (location.hostname === 'localhost' || location.hostname.split('.')[0] === '192') {
+          return;
+        }
+        return $window.onbeforeunload = function() {
+          return 'Do you really want to leave and remove your haiku?';
+        };
+      };
+
+      PageState.prototype.disable = function() {
+        return $window.onbeforeunload = null;
+      };
+
+      return PageState;
+
+    })();
+    return new PageState;
+  }
+]);
+
 angular.module('app.common.webSockets', []).service('WebSockets', [
   '$window', function($window) {
     return window.io;
@@ -190,9 +216,8 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
           if ((_ref = dt.files) != null ? _ref[0] : void 0) {
             type = getFileType(dt.files[0]);
             if (type === 'text') {
-              getTextFiles(dt.files[0], scope.onDrop);
-            }
-            if (type === 'images') {
+              return getTextFiles(dt.files[0], scope.onDrop);
+            } else if (type === 'images') {
               return getImageFiles(dt.files, scope.onDrop);
             }
           }
@@ -207,12 +232,13 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
   }
 ]);
 
-angular.module('pl.paprikka.haiku', ['ngSanitize', 'pl.paprikka.directives.haiku', 'pl.paprikka.directives.drop', 'pl.paprikka.haiku.directives.nav', 'pl.paprikka.directives.haiku.hTap', 'pl.paprikka.services.hammerjs', 'pl.paprikka.haiku.services.remote', 'pl.paprikka.haiku.services.slides', 'pl.paprikka.haiku.controllers.import', 'pl.paprikka.haiku.controllers.play', 'pl.paprikka.haiku.controllers.view']);
+angular.module('pl.paprikka.haiku', ['ngSanitize', 'app.common.services.pageState', 'pl.paprikka.directives.haiku', 'pl.paprikka.directives.drop', 'pl.paprikka.haiku.directives.nav', 'pl.paprikka.directives.haiku.hTap', 'pl.paprikka.services.hammerjs', 'pl.paprikka.haiku.services.remote', 'pl.paprikka.haiku.services.slides', 'pl.paprikka.haiku.controllers.import', 'pl.paprikka.haiku.controllers.play', 'pl.paprikka.haiku.controllers.view']);
 
 angular.module('pl.paprikka.haiku.controllers.import', ['pl.paprikka.haiku.services.importer', 'app.common.services.Notify']).controller('HaikuImportCtrl', [
   'Importer', '$location', '$rootScope', '$scope', 'Remote', 'Modal', 'Notify', function(Importer, $location, $rootScope, $scope, Remote, Modal, Notify) {
     $rootScope.categories = [];
     $scope.files = [];
+    $scope.mdSupported = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? false : true;
     $rootScope.$on('haiku:room:accepted', function(e, data) {
       $rootScope.clientRole = 'host';
       $location.path('/play/' + data.room);
@@ -236,8 +262,9 @@ angular.module('pl.paprikka.haiku.controllers.import', ['pl.paprikka.haiku.servi
 ]);
 
 angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal', 'app.common.directives.CopyOnSelect']).controller('HaikuPlayCtrl', [
-  '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', 'Modal', 'Notify', function($location, $routeParams, $rootScope, $scope, $timeout, Remote, Modal, Notify) {
+  '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', 'Slides', 'Modal', 'Notify', 'PageState', function($location, $routeParams, $rootScope, $scope, $timeout, Remote, Slides, Modal, Notify, PageState) {
     var sendCtrl, shareCtrl, showUI, _ref;
+    PageState.enable();
     showUI = function() {
       return $scope.UIReady = true;
     };
@@ -249,6 +276,8 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
       return Notify.info('Remote bookmark sent.');
     });
     $rootScope.$on('haiku:room:remoteJoined', function() {
+      console.log('Haiku::Remote joined, sending current status...');
+      $scope.updateStatus(Slides["package"]($scope.categories));
       return Notify.info('Remote connected.');
     });
     $rootScope.$on('haiku:room:guestJoined', function() {
@@ -518,16 +547,11 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
         $($window).on('mousewheel', onMouseWheel);
         $rootScope.$on('haiku:remote:control', function(e, data) {
           return scope.$apply(function() {
-            var _ref;
-            switch ((_ref = data.params) != null ? _ref.direction : void 0) {
-              case 'up':
-                return scope.prevSlide();
-              case 'down':
-                return scope.nextSlide();
-              case 'left':
-                return scope.prevCategory();
-              case 'right':
-                return scope.nextCategory();
+            if (data.command === 'position') {
+              return scope.goto({
+                index: data.params.currentSlide,
+                categoryIndex: data.params.currentCategory
+              });
             }
           });
         });
@@ -568,7 +592,7 @@ angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
 ]);
 
 angular.module('pl.paprikka.haiku.directives.nav', ['pl.paprikka.haiku.services.slides']).directive('haikuNav', [
-  '$rootScope', '$location', 'Slides', function($rootScope, $location, Slides) {
+  '$rootScope', '$location', 'Slides', 'Modal', function($rootScope, $location, Slides, Modal) {
     return {
       scope: {
         categories: '=',
@@ -581,6 +605,7 @@ angular.module('pl.paprikka.haiku.directives.nav', ['pl.paprikka.haiku.services.
       replace: true,
       templateUrl: 'haiku/partials/directives/nav.html',
       link: function(scope, elm, attr) {
+        var closeCtrl;
         scope.clientRole = $rootScope.clientRole;
         scope.goto = function(slide) {
           return $rootScope.$emit('haiku:remote:goto', slide);
@@ -591,8 +616,25 @@ angular.module('pl.paprikka.haiku.directives.nav', ['pl.paprikka.haiku.services.
         scope.isCurrentSlide = function(slide) {
           return Slides.isCurrentSlide(slide, scope.categories);
         };
+        closeCtrl = function($scope, $modalInstance) {
+          $scope.ok = function() {
+            return $modalInstance.close(true);
+          };
+          return $scope.cancel = function() {
+            return $modalInstance.dismiss('cancel');
+          };
+        };
         return scope.close = function() {
-          return $location.path('/');
+          var modalInstance;
+          modalInstance = Modal.open({
+            templateUrl: 'haiku/partials/modals/close.html',
+            controller: closeCtrl
+          });
+          return modalInstance.result.then(function(result) {
+            if (result) {
+              return $location.path('/');
+            }
+          });
         };
       }
     };
@@ -710,22 +752,21 @@ angular.module('pl.paprikka.services.markdown', []).service('Markdown', [
 
 angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).service('Remote', [
   'WebSockets', '$rootScope', function(WebSockets, $rootScope) {
-    var HUB_LOCATION, Remote, SOCKET_LOCATION, socket;
+    var Remote, SOCKET_LOCATION, socket;
     console.log('Remote::init');
-    HUB_LOCATION = 'http://haiku-hub.herokuapp.com:80';
-    SOCKET_LOCATION = location.hostname.split('.')[0] === '192' ? location.hostname + ':8082' : HUB_LOCATION;
+    SOCKET_LOCATION = haiku.config.hubURL;
     socket = WebSockets.connect(SOCKET_LOCATION);
     socket.on('connect', function() {
       console.log('haiku::Remote::connected');
       socket.on('remote', function(data) {
         return $rootScope.$emit('haiku:remote:control', data);
       });
-      socket.on('room:remoteJoined', function(data) {
+      socket.on('room:remoteJoined', _.throttle((function(data) {
         return $rootScope.$emit('haiku:room:remoteJoined', data);
-      });
-      socket.on('room:guestJoined', function(data) {
+      }), 100));
+      socket.on('room:guestJoined', _.throttle((function(data) {
         return $rootScope.$emit('haiku:room:guestJoined', data);
-      });
+      }), 100));
       socket.on('room:accepted', function(data) {
         return $rootScope.$emit('haiku:room:accepted', data);
       });
