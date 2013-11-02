@@ -73,8 +73,8 @@ angular.module("haiku/partials/modals/close.html", []).run(["$templateCache", fu
     "</div>\n" +
     "<div class=\"modal__body\">Do you really want to go back to upload and remove this haiku?</div>\n" +
     "<div class=\"modal__footer\">\n" +
-    "  <button ng-click=\"ok()\" class=\"btn btn--positive\">Ok, close.</button>\n" +
-    "  <button ng-click=\"cancel()\" class=\"btn btn--negative\">No, stay here.</button>\n" +
+    "  <button ng-click=\"ok()\" class=\"btn btn--negative\">Ok, close</button>\n" +
+    "  <button ng-click=\"cancel()\" class=\"btn btn--positive\">No, stay here</button>\n" +
     "</div>");
 }]);
 
