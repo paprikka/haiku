@@ -106,7 +106,7 @@ angular.module("haiku/partials/modals/send-remote-url.html", []).run(["$template
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal__footer\">\n" +
-    "  <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"ok(yes)\" class=\"btn btn--positive\">Ok, send.</button>\n" +
+    "  <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"ok(true)\" class=\"btn btn--positive\">Ok, send.</button>\n" +
     "  <button ng-click=\"cancel()\" class=\"btn btn--negative\">Cancel</button>\n" +
     "</div>");
 }]);
