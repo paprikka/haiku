@@ -1,10 +1,10 @@
 'use strict';
 /* Controllers*/
 
-var App;
+var App, HaikuPlayCtrl;
 
 angular.module('app.controllers', []).controller('AppCtrl', [
-  '$scope', '$location', '$rootScope', function($scope, $location, $rootScope) {
+  '$scope', '$location', '$rootScope', 'Modal', function($scope, $location, $rootScope, Modal) {
     var setActiveNavId;
     $scope.application = {
       initialized: true
@@ -44,8 +44,41 @@ angular.module('app.common.directives.CopyOnSelect', []).directive('copyOnSelect
 
 angular.module("app.common.services.Modal", ['ui.bootstrap', 'ui.bootstrap.tpls']).service('Modal', [
   '$modal', function($modal) {
+    var methods;
     window.m = $modal;
-    return $modal;
+    methods = {
+      alert: function(title, body, icon) {
+        var alertCtrl, modalInstance;
+        alertCtrl = function($scope, $modalInstance, data) {
+          $scope.data = data;
+          $scope.close = function() {
+            return $modalInstance.dismiss('close');
+          };
+          return $scope.getIconClass = function() {
+            if (data.icon) {
+              return 'icon-' + data.icon;
+            } else {
+              return '';
+            }
+          };
+        };
+        modalInstance = $modal.open({
+          templateUrl: 'common/partials/modals/alert.html',
+          controller: alertCtrl,
+          resolve: {
+            data: function() {
+              return {
+                title: title || 'Message',
+                body: body,
+                icon: icon
+              };
+            }
+          }
+        });
+        return modalInstance.result.then(function() {});
+      }
+    };
+    return _.extend($modal, methods);
   }
 ]).service('ModalDefaults', function() {
   var settings;
@@ -98,6 +131,14 @@ angular.module('app.common.services.pageState', []).service('PageState', [
   }
 ]);
 
+angular.module('app.common.services.CORS', []).config([
+  '$httpProvider', function($httpProvider) {
+    console.log('common.services.CORSService enabled.');
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    return delete $httpProvider.defaults.headers.common['Content-Type'];
+  }
+]);
+
 angular.module('app.common.webSockets', []).service('WebSockets', [
   '$window', function($window) {
     return window.io;
@@ -105,7 +146,7 @@ angular.module('app.common.webSockets', []).service('WebSockets', [
 ]);
 
 angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
-  '$window', function($window) {
+  '$window', 'Modal', function($window, Modal) {
     return {
       restrict: 'AE',
       templateUrl: 'drop/drop.html',
@@ -115,7 +156,7 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
         files: '='
       },
       link: function(scope, elm, attrs) {
-        var boxEl, getFileType, getImageFiles, getTextFiles, onDragEnter, onDragLeave, onDragOver, onDrop;
+        var boxEl, getFileType, getImageFiles, getTextFiles, messages, onDragEnter, onDragLeave, onDragOver, onDrop;
         boxEl = elm.find('.ppk-drop__box')[0];
         scope.isFileOver = false;
         onDragEnter = function(e) {
@@ -131,8 +172,15 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
         onDragOver = function(e) {
           return e.preventDefault();
         };
+        messages = {
+          unsupportedType: {
+            title: 'Unsupported file type',
+            body: "Use Markdown (*.md, *.txt) or images to create a Haikµ. <br>\nLike to see a different format / feature here? <a href=\"mailto:gethaiku@gmail.com\">Let us know</a>!",
+            icon: 'upload'
+          }
+        };
         onDrop = function(e) {
-          var dt, type, _ref;
+          var dt;
           e.stopPropagation();
           e.preventDefault();
           dt = e.dataTransfer;
@@ -140,15 +188,7 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
             scope.files = dt.files;
             return scope.isFileOver = false;
           });
-          if ((_ref = dt.files) != null ? _ref[0] : void 0) {
-            type = getFileType(dt.files[0]);
-            if (type === 'text') {
-              getTextFiles(dt.files[0], scope.onDrop);
-            }
-            if (type === 'images') {
-              return getImageFiles(dt.files, scope.onDrop);
-            }
-          }
+          return scope.handleUpload(dt);
         };
         getFileType = function(fileDesc) {
           var ext, regex, _ref;
@@ -212,13 +252,16 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
           });
         });
         scope.handleUpload = function(dt) {
-          var type, _ref;
+          var m, type, _ref;
           if ((_ref = dt.files) != null ? _ref[0] : void 0) {
             type = getFileType(dt.files[0]);
             if (type === 'text') {
               return getTextFiles(dt.files[0], scope.onDrop);
             } else if (type === 'images') {
               return getImageFiles(dt.files, scope.onDrop);
+            } else {
+              m = messages.unsupportedType;
+              return Modal.alert(m.title, m.body, m.icon);
             }
           }
         };
@@ -232,25 +275,33 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
   }
 ]);
 
-angular.module('pl.paprikka.haiku', ['ngSanitize', 'app.common.services.pageState', 'pl.paprikka.directives.haiku', 'pl.paprikka.directives.drop', 'pl.paprikka.haiku.directives.nav', 'pl.paprikka.directives.haiku.hTap', 'pl.paprikka.services.hammerjs', 'pl.paprikka.haiku.services.remote', 'pl.paprikka.haiku.services.slides', 'pl.paprikka.haiku.controllers.import', 'pl.paprikka.haiku.controllers.play', 'pl.paprikka.haiku.controllers.view']);
+angular.module('pl.paprikka.haiku', ['ngSanitize', 'app.common.services.pageState', 'app.common.services.CORS', 'pl.paprikka.directives.haiku', 'pl.paprikka.directives.drop', 'pl.paprikka.haiku.directives.nav', 'pl.paprikka.directives.haiku.hTap', 'pl.paprikka.services.hammerjs', 'pl.paprikka.haiku.services.remote', 'pl.paprikka.haiku.services.slides', 'pl.paprikka.haiku.controllers.import', 'pl.paprikka.haiku.controllers.play', 'pl.paprikka.haiku.controllers.view']);
 
 angular.module('pl.paprikka.haiku.controllers.import', ['pl.paprikka.haiku.services.importer', 'app.common.services.Notify']).controller('HaikuImportCtrl', [
   'Importer', '$location', '$rootScope', '$scope', 'Remote', 'Modal', 'Notify', function(Importer, $location, $rootScope, $scope, Remote, Modal, Notify) {
     $rootScope.categories = [];
     $scope.files = [];
+    $scope.state = 'idle';
     $scope.mdSupported = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? false : true;
-    $rootScope.$on('haiku:room:accepted', function(e, data) {
-      $rootScope.clientRole = 'host';
-      $location.path('/play/' + data.room);
-      return $scope.$apply();
-    });
+    Remote.connect();
     $scope.initConnection = function(categories) {
       return Remote.request(categories);
     };
     return $scope.onFileDropped = function(data) {
+      if (!$scope.$$phase) {
+        $scope.$apply(function() {
+          return $scope.state = 'sending';
+        });
+      }
       return _.defer(function() {
         return $scope.$apply(function() {
+          $rootScope.$on('haiku:room:accepted', function(e, data) {
+            $rootScope.clientRole = 'host';
+            $location.path('/play/' + data.room);
+            return $scope.$apply();
+          });
           $rootScope.categories = Importer.getFromFiles(data);
+          window.categories = $rootScope.categories;
           if ($rootScope.categories.length) {
             $scope.initConnection($rootScope.categories);
           }
@@ -261,7 +312,7 @@ angular.module('pl.paprikka.haiku.controllers.import', ['pl.paprikka.haiku.servi
   }
 ]);
 
-angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal', 'app.common.directives.CopyOnSelect']).controller('HaikuPlayCtrl', [
+HaikuPlayCtrl = angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal', 'app.common.directives.CopyOnSelect']).controller('HaikuPlayCtrl', [
   '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', 'Slides', 'Modal', 'Notify', 'PageState', function($location, $routeParams, $rootScope, $scope, $timeout, Remote, Slides, Modal, Notify, PageState) {
     var sendCtrl, shareCtrl, showUI, _ref;
     PageState.enable();
@@ -271,6 +322,9 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
     $timeout(showUI, 2000);
     $rootScope.$on('haiku:remote:URLShared', function() {
       return Notify.info('Invitations sent.');
+    });
+    $rootScope.$on('haiku:room:readyToShare', function() {
+      return Notify.info('Haiku is ready to share.');
     });
     $rootScope.$on('haiku:remote:URLSent', function() {
       return Notify.info('Remote bookmark sent.');
@@ -287,9 +341,17 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
       return Remote.sendUpdates(data, $routeParams.roomID);
     };
     sendCtrl = function($scope, $modalInstance) {
+      var onConnected;
       $scope.result = {};
-      $scope.ok = function() {
-        return $modalInstance.close($scope.result.email);
+      $scope.currentEncodedURL = encodeURIComponent(haiku.config.remoteURL + '/#/' + $routeParams.roomID);
+      onConnected = $rootScope.$on('haiku:room:remoteJoined', function() {
+        $scope.cancel();
+        return onConnected();
+      });
+      $scope.ok = function(isOK) {
+        if (isOK) {
+          return $modalInstance.close($scope.result.email);
+        }
       };
       return $scope.cancel = function() {
         return $modalInstance.dismiss('cancel');
@@ -315,6 +377,7 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
         return location.toString().replace(/#\/play\//i, "#/view/");
       };
       $scope.currentURL = getCurrentURL();
+      $scope.currentEncodedURL = encodeURIComponent($scope.currentURL);
       $scope.add = function(email) {
         if (email != null ? email.length : void 0) {
           $scope.emails.push(email);
@@ -352,7 +415,7 @@ angular.module('pl.paprikka.haiku.controllers.play', ['app.common.services.Modal
 ]);
 
 angular.module('pl.paprikka.haiku.controllers.view', []).controller('HaikuViewCtrl', [
-  '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', function($location, $routeParams, $rootScope, $scope, $timeout, Remote) {
+  '$http', '$location', '$routeParams', '$rootScope', '$scope', '$timeout', 'Remote', function($http, $location, $routeParams, $rootScope, $scope, $timeout, Remote) {
     $scope.status = 'loading';
     $rootScope.clientRole = 'guest';
     $scope.test = 'bar';
@@ -361,16 +424,18 @@ angular.module('pl.paprikka.haiku.controllers.view', []).controller('HaikuViewCt
     }
     Remote.join($routeParams.roomID);
     $rootScope.$on('haiku:room:joined', function(scope, data) {
-      Remote.broadcastJoinedGuest(data.room);
-      return $scope.$apply(function() {
+      var onDataLoaded;
+      onDataLoaded = function(res) {
         var showUI;
-        $rootScope.categories = data.categories;
+        Remote.broadcastJoinedGuest(data.room);
+        $rootScope.categories = res.categories;
         $scope.status = 'ready';
         showUI = function() {
           return $scope.UIReady = true;
         };
         return $timeout(showUI, 2000);
-      });
+      };
+      return $http.get(data.categories).success(onDataLoaded);
     });
     return $scope.navVisible = true;
   }
@@ -415,7 +480,7 @@ angular.module('pl.paprikka.directives.haiku-import', ['pl.paprikka.haiku.servic
 ]);
 
 angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
-  '$window', 'Hammer', 'Slides', '$rootScope', function($window, Hammer, Slides, $rootScope) {
+  '$window', '$sce', 'Hammer', 'Slides', '$rootScope', function($window, $sce, Hammer, Slides, $rootScope) {
     return {
       scope: {
         categories: '=',
@@ -607,6 +672,11 @@ angular.module('pl.paprikka.haiku.directives.nav', ['pl.paprikka.haiku.services.
       templateUrl: 'haiku/partials/directives/nav.html',
       link: function(scope, elm, attr) {
         var closeCtrl;
+        $rootScope.$on('haiku:room:readyToShare', function() {
+          return scope.$apply(function() {
+            return scope.readyToShare = true;
+          });
+        });
         scope.clientRole = $rootScope.clientRole;
         scope.goto = function(slide) {
           return $rootScope.$emit('haiku:remote:goto', slide);
@@ -678,7 +748,7 @@ angular.module('pl.paprikka.haiku.services.importer', ['pl.paprikka.services.mar
       newCategories = [];
       _.each(categoryBodies, function(cat) {
         var newCategory, slidesContents;
-        slidesContents = cat.replace(/<h1>/gi, '__PAGE_BREAK__<h1>').split('__PAGE_BREAK__');
+        slidesContents = cat.replace(/<h1.*?>/gi, '__PAGE_BREAK__<h1>').split('__PAGE_BREAK__');
         newCategory = {
           slides: []
         };
@@ -753,21 +823,29 @@ angular.module('pl.paprikka.services.markdown', []).service('Markdown', [
 
 angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).service('Remote', [
   'WebSockets', '$rootScope', function(WebSockets, $rootScope) {
-    var Remote, SOCKET_LOCATION, socket;
+    var Remote, SOCKET_LOCATION, clearListeners, socket;
     console.log('Remote::init');
     SOCKET_LOCATION = haiku.config.hubURL;
     socket = WebSockets.connect(SOCKET_LOCATION);
     socket.on('connect', function() {
       console.log('haiku::Remote::connected');
+      $rootScope.$apply();
+      socket.on('room:readyToShare', function(data) {
+        return $rootScope.$emit('haiku:room:readyToShare', data);
+      });
+      socket.on('error', function(data) {
+        console.error('Socket error', data);
+        return $rootScope.$emit('haiku:error', data);
+      });
       socket.on('remote', function(data) {
         return $rootScope.$emit('haiku:remote:control', data);
       });
-      socket.on('room:remoteJoined', _.throttle((function(data) {
+      socket.on('room:remoteJoined', function(data) {
         return $rootScope.$emit('haiku:room:remoteJoined', data);
-      }), 100));
-      socket.on('room:guestJoined', _.throttle((function(data) {
+      });
+      socket.on('room:guestJoined', function(data) {
         return $rootScope.$emit('haiku:room:guestJoined', data);
-      }), 100));
+      });
       socket.on('room:accepted', function(data) {
         return $rootScope.$emit('haiku:room:accepted', data);
       });
@@ -781,6 +859,15 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
         return $rootScope.$emit('haiku:remote:URLShared', data);
       });
     });
+    clearListeners = function() {
+      var listeners;
+      listeners = $rootScope.$$listeners;
+      return _.forIn(listeners, function(value, key) {
+        if (key.split(':')[0] === 'haiku') {
+          return $rootScope.$$listeners[key] = null;
+        }
+      });
+    };
     return Remote = {
       join: function(room) {
         return socket.emit('room:join', {
@@ -813,6 +900,9 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
         return socket.emit('remote:guestJoined', {
           room: room
         });
+      },
+      connect: function() {
+        return clearListeners();
       },
       sendUpdates: function(data, room) {
         console.log('haiku::update', data, room, socket);
@@ -863,7 +953,7 @@ angular.module('pl.paprikka.haiku.services.slides', []).factory('Slides', [
 
 'use strict';
 
-App = angular.module('app', ['templates', 'ngCookies', 'ngResource', 'app.controllers', 'ui.bootstrap', 'ui.bootstrap.tpls', 'pl.paprikka.haiku']);
+App = angular.module('app', ['templates', 'ngCookies', 'ngResource', 'ngRoute', 'ngRoute', 'app.controllers', 'ui.bootstrap', 'ui.bootstrap.tpls', 'pl.paprikka.haiku']);
 
 App.config([
   '$routeProvider', '$locationProvider', '$modalProvider', '$tooltipProvider', function($routeProvider, $locationProvider, $modalProvider, $tooltipProvider) {

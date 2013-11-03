@@ -1,0 +1,8 @@
+<span class="modal__icon"><i ng-class="getIconClass()" ng-if="data.icon"></i></span>
+<div class="modal__title">
+  <h2>{{data.title}}</h2>
+</div>
+<div ng-bind-html="data.body" class="modal__body"></div>
+<div class="modal__footer">
+  <button ng-click="close()" class="btn btn--negative">Ok, close</button>
+</div>

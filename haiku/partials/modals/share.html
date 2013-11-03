@@ -1,27 +1,30 @@
-
+<span class="modal__icon"><i class="icon-share"></i></span>
 <div class="modal__title">
-  <h2>
-     
-    Share a haiku: 
-    <input copy-on-select="copy-on-select" ng-model="currentURL" readonly="readonly" class="input-text input--paste"/>
+  <h2 class="flexbox"> <span class="flexbox__item">Share a haiku: </span>
+    <div class="flexbox__item">
+      <input copy-on-select="copy-on-select" ng-model="currentURL" readonly="readonly" class="input-text input--full input--paste"/>
+    </div>
   </h2>
 </div>
-<div class="modal__body">
-  <ul class="haiku-share__emails">
-    <li ng-show="!emails.length">
-      <div class="beta">Boooo</div>
-      <p>No one's invited to the party :(</p>
-    </li>
-    <li ng-repeat="email in emails" class="haiku-share__email"><span>{{email}}</span>
-      <button ng-click="remove(email)" tabindex="-1" class="haiku-share__remove">&times;</button>
-    </li>
-  </ul>
-  <form name="form" novalidate="novalidate" ng-submit="add(newEmail.value)" class="form">
-    <div class="form-item">
-      <input name="modalEmail" type="email" placeholder="Add new email..." ng-model="newEmail.value" required="required" class="haiku-share__add-input"/>
-      <button ng-disabled="form.modalEmail.$invalid" ng-click="add(newEmail.value)" class="haiku-share__add">Add</button>
-    </div>
-  </form>
+<div class="modal__body haiku-share__modal-wrapper">
+  <div class="haiku-share__form">
+    <ul class="haiku-share__emails">
+      <li ng-show="!emails.length">
+        <div class="beta">Boooo</div>
+        <p>No one's invited to the party :(</p>
+      </li>
+      <li ng-repeat="email in emails" class="haiku-share__email"><span>{{email}}</span>
+        <button ng-click="remove(email)" tabindex="-1" class="haiku-share__remove">&times;</button>
+      </li>
+    </ul>
+    <form name="form" novalidate="novalidate" ng-submit="add(newEmail.value)" class="form">
+      <div class="form-item">
+        <input name="modalEmail" type="email" placeholder="Add new email..." ng-model="newEmail.value" required="required" class="haiku-share__add-input"/>
+        <button ng-disabled="form.modalEmail.$invalid" ng-click="add(newEmail.value)" class="haiku-share__add">Add</button>
+      </div>
+    </form>
+  </div>
+  <div class="haiku-share__qr"><img ng-src="http://qrickit.com/api/qr?d={{currentEncodedURL}}&amp;bgdcolor=f7f7f7&amp;fgdcolor=7f748c&amp;qrsize=320" width="160" height="160"/></div>
 </div>
 <div class="modal__footer">
   <button ng-disabled="!emails.length" ng-click="ok()" class="btn btn--positive">Ok, send.</button>

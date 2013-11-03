@@ -46,11 +46,12 @@
     <div class="viewport">
       <div ng-view class="viewport__content"></div>
     </div>
-    <script src="//haiku-hub.herokuapp.com:80/socket.io/socket.io.js"></script>
+    <script src="http://haiku-hub.herokuapp.com:80/socket.io/socket.io.js"></script>
     <script>
       window.haiku = {
         config: {
-          hubURL: '//haiku-hub.herokuapp.com:80'
+          hubURL: 'http://haiku-hub.herokuapp.com:80',
+          remoteURL: 'http://paprikka.github.io/haiku-remote'
         }
       }
       

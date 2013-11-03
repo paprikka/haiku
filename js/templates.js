@@ -1,8 +1,20 @@
-angular.module('templates', ['common/partials/modal-prompt.html', 'drop/drop.html', 'haiku/partials/directives/nav.html', 'haiku/partials/haiku-import.html', 'haiku/partials/haiku.html', 'haiku/partials/modals/close.html', 'haiku/partials/modals/send-remote-url.html', 'haiku/partials/modals/share.html', 'haiku/partials/views/import.html', 'haiku/partials/views/play.html', 'haiku/partials/views/view.html', 'head.html', 'index.html', 'pages/404.html', 'pages/partials/intro.html']);
+angular.module('templates', ['common/partials/modal-prompt.html', 'common/partials/modals/alert.html', 'drop/drop.html', 'haiku/partials/directives/nav.html', 'haiku/partials/haiku-import.html', 'haiku/partials/haiku.html', 'haiku/partials/modals/close.html', 'haiku/partials/modals/send-remote-url.html', 'haiku/partials/modals/share.html', 'haiku/partials/views/import.html', 'haiku/partials/views/play.html', 'haiku/partials/views/view.html', 'head.html', 'index.html', 'pages/404.html', 'pages/partials/intro.html']);
 
 angular.module("common/partials/modal-prompt.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("common/partials/modal-prompt.html",
     "{{ test }}");
+}]);
+
+angular.module("common/partials/modals/alert.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("common/partials/modals/alert.html",
+    "<span class=\"modal__icon\"><i ng-class=\"getIconClass()\" ng-if=\"data.icon\"></i></span>\n" +
+    "<div class=\"modal__title\">\n" +
+    "  <h2>{{data.title}}</h2>\n" +
+    "</div>\n" +
+    "<div ng-bind-html=\"data.body\" class=\"modal__body\"></div>\n" +
+    "<div class=\"modal__footer\">\n" +
+    "  <button ng-click=\"close()\" class=\"btn btn--negative\">Ok, close</button>\n" +
+    "</div>");
 }]);
 
 angular.module("drop/drop.html", []).run(["$templateCache", function($templateCache) {
@@ -24,7 +36,8 @@ angular.module("haiku/partials/directives/nav.html", []).run(["$templateCache", 
     "  <div class=\"haiku-nav__tools\">\n" +
     "    <button ng-show=\"clientRole == 'host'\" h-tap=\"close()\" class=\"haiku__close-btn\"><i></i></button>\n" +
     "    <button ng-show=\"clientRole == 'host'\" h-tap=\"enableRemote()\" class=\"haiku__remote-btn\"><i></i></button>\n" +
-    "    <button ng-show=\"clientRole == 'host'\" h-tap=\"share()\" class=\"haiku__share-btn\"><i></i></button>\n" +
+    "    <button ng-show=\"(clientRole == 'host') &amp;&amp; readyToShare\" h-tap=\"share()\" class=\"haiku__share-btn\"><i></i></button>\n" +
+    "    <button ng-show=\"(clientRole == 'host') &amp;&amp; !readyToShare\" class=\"haiku__loading-btn\"><i></i></button>\n" +
     "  </div>\n" +
     "  <ol ng-show=\"categories.length &gt; 1\" class=\"haiku-nav__categories\">\n" +
     "    <li ng-repeat=\"category in categories\" ng-class=\"{ 'haiku-nav__category--current' : currentCategory == isCurrentCategory(category) }\" class=\"haiku-nav__category\">\n" +
@@ -67,7 +80,7 @@ angular.module("haiku/partials/haiku.html", []).run(["$templateCache", function(
 
 angular.module("haiku/partials/modals/close.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/modals/close.html",
-    "\n" +
+    "<span class=\"modal__icon\"><i class=\"icon-switch\"></i></span>\n" +
     "<div class=\"modal__title\">\n" +
     "  <h2>Confirm</h2>\n" +
     "</div>\n" +
@@ -80,49 +93,53 @@ angular.module("haiku/partials/modals/close.html", []).run(["$templateCache", fu
 
 angular.module("haiku/partials/modals/send-remote-url.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/modals/send-remote-url.html",
-    "\n" +
+    "<span class=\"modal__icon\"><i class=\"icon-gamepad\"></i></span>\n" +
     "<div class=\"modal__title\">\n" +
     "  <h2>Get Remote Control URL</h2>\n" +
     "</div>\n" +
     "<div class=\"modal__body\">\n" +
-    "  <form name=\"form\" class=\"form\">\n" +
-    "    <div class=\"form-item\">\n" +
+    "  <form name=\"form\" ng-submit=\"ok(!form.modalEmail.$invalid)\" class=\"form send-remote-url\">\n" +
+    "    <div class=\"form-item send-remote-url__input\">\n" +
     "      <input name=\"modalEmail\" type=\"email\" placeholder=\"Type your email here\" ng-model=\"result.email\" required=\"required\" class=\"input-text input-text--huge input--full\"/>\n" +
     "    </div>\n" +
+    "    <div class=\"flexbox__item send-remote-url__qr\"><img ng-src=\"http://qrickit.com/api/qr?d={{currentEncodedURL}}&amp;bgdcolor=f7f7f7&amp;fgdcolor=7f748c&amp;qrsize=180\" width=\"90\" height=\"90\"/></div>\n" +
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal__footer\">\n" +
-    "  <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"ok()\" class=\"btn btn--positive\">Ok, send.</button>\n" +
+    "  <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"ok(yes)\" class=\"btn btn--positive\">Ok, send.</button>\n" +
     "  <button ng-click=\"cancel()\" class=\"btn btn--negative\">Cancel</button>\n" +
     "</div>");
 }]);
 
 angular.module("haiku/partials/modals/share.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("haiku/partials/modals/share.html",
-    "\n" +
+    "<span class=\"modal__icon\"><i class=\"icon-share\"></i></span>\n" +
     "<div class=\"modal__title\">\n" +
-    "  <h2>\n" +
-    "     \n" +
-    "    Share a haiku: \n" +
-    "    <input copy-on-select=\"copy-on-select\" ng-model=\"currentURL\" readonly=\"readonly\" class=\"input-text input--paste\"/>\n" +
+    "  <h2 class=\"flexbox\"> <span class=\"flexbox__item\">Share a haiku: </span>\n" +
+    "    <div class=\"flexbox__item\">\n" +
+    "      <input copy-on-select=\"copy-on-select\" ng-model=\"currentURL\" readonly=\"readonly\" class=\"input-text input--full input--paste\"/>\n" +
+    "    </div>\n" +
     "  </h2>\n" +
     "</div>\n" +
-    "<div class=\"modal__body\">\n" +
-    "  <ul class=\"haiku-share__emails\">\n" +
-    "    <li ng-show=\"!emails.length\">\n" +
-    "      <div class=\"beta\">Boooo</div>\n" +
-    "      <p>No one's invited to the party :(</p>\n" +
-    "    </li>\n" +
-    "    <li ng-repeat=\"email in emails\" class=\"haiku-share__email\"><span>{{email}}</span>\n" +
-    "      <button ng-click=\"remove(email)\" tabindex=\"-1\" class=\"haiku-share__remove\">&times;</button>\n" +
-    "    </li>\n" +
-    "  </ul>\n" +
-    "  <form name=\"form\" novalidate=\"novalidate\" ng-submit=\"add(newEmail.value)\" class=\"form\">\n" +
-    "    <div class=\"form-item\">\n" +
-    "      <input name=\"modalEmail\" type=\"email\" placeholder=\"Add new email...\" ng-model=\"newEmail.value\" required=\"required\" class=\"haiku-share__add-input\"/>\n" +
-    "      <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"add(newEmail.value)\" class=\"haiku-share__add\">Add</button>\n" +
-    "    </div>\n" +
-    "  </form>\n" +
+    "<div class=\"modal__body haiku-share__modal-wrapper\">\n" +
+    "  <div class=\"haiku-share__form\">\n" +
+    "    <ul class=\"haiku-share__emails\">\n" +
+    "      <li ng-show=\"!emails.length\">\n" +
+    "        <div class=\"beta\">Boooo</div>\n" +
+    "        <p>No one's invited to the party :(</p>\n" +
+    "      </li>\n" +
+    "      <li ng-repeat=\"email in emails\" class=\"haiku-share__email\"><span>{{email}}</span>\n" +
+    "        <button ng-click=\"remove(email)\" tabindex=\"-1\" class=\"haiku-share__remove\">&times;</button>\n" +
+    "      </li>\n" +
+    "    </ul>\n" +
+    "    <form name=\"form\" novalidate=\"novalidate\" ng-submit=\"add(newEmail.value)\" class=\"form\">\n" +
+    "      <div class=\"form-item\">\n" +
+    "        <input name=\"modalEmail\" type=\"email\" placeholder=\"Add new email...\" ng-model=\"newEmail.value\" required=\"required\" class=\"haiku-share__add-input\"/>\n" +
+    "        <button ng-disabled=\"form.modalEmail.$invalid\" ng-click=\"add(newEmail.value)\" class=\"haiku-share__add\">Add</button>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "  <div class=\"haiku-share__qr\"><img ng-src=\"http://qrickit.com/api/qr?d={{currentEncodedURL}}&amp;bgdcolor=f7f7f7&amp;fgdcolor=7f748c&amp;qrsize=320\" width=\"160\" height=\"160\"/></div>\n" +
     "</div>\n" +
     "<div class=\"modal__footer\">\n" +
     "  <button ng-disabled=\"!emails.length\" ng-click=\"ok()\" class=\"btn btn--positive\">Ok, send.</button>\n" +
@@ -134,7 +151,12 @@ angular.module("haiku/partials/views/import.html", []).run(["$templateCache", fu
   $templateCache.put("haiku/partials/views/import.html",
     "\n" +
     "<div class=\"haiku-import\"><a href=\"examples/categories.md\" target=\"_blank\" download=\"Drag me to the browser window.md\" ng-show=\"mdSupported\" class=\"import__example\">Get example haiku</a>\n" +
-    "  <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
+    "  <div ng-show=\"state == 'idle'\">\n" +
+    "    <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
+    "  </div>\n" +
+    "  <div ng-show=\"state == 'sending'\" class=\"haiku-loading\">\n" +
+    "    <div class=\"haiku-loading__label\">Loading...</div>\n" +
+    "  </div>\n" +
     "</div>");
 }]);
 
@@ -268,7 +290,8 @@ angular.module("index.html", []).run(["$templateCache", function($templateCache)
     "    <script>\n" +
     "      window.haiku = {\n" +
     "        config: {\n" +
-    "          hubURL: '@@hubURL'\n" +
+    "          hubURL: '@@hubURL',\n" +
+    "          remoteURL: '@@remoteURL'\n" +
     "        }\n" +
     "      }\n" +
     "      \n" +

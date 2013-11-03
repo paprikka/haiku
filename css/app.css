@@ -15,7 +15,7 @@ h1, h2, h3, h4, h5 {
 }
 
 /* line 3, ../../styles/ui/_icons.scss */
-[class*="icon-"], .haiku__share-btn i, .haiku__remote-btn i, .haiku__close-btn i, .ppk-drop__box i {
+[class*="icon-"], .haiku__share-btn i, .haiku__loading-btn i, .haiku__remote-btn i, .haiku__close-btn i, .ppk-drop__box i {
   font-family: 'icomoon';
   speak: none;
   font-style: normal;
@@ -28,58 +28,38 @@ h1, h2, h3, h4, h5 {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* line 18, ../../styles/ui/_icons.scss */
-.icon-cloud-download:before {
-  content: "\e600";
-}
-
-/* line 21, ../../styles/ui/_icons.scss */
-.icon-cloud-upload:before {
-  content: "\e601";
-}
-
-/* line 24, ../../styles/ui/_icons.scss */
+/* line 17, ../../styles/ui/_icons.scss */
 .icon-arrow-down:before, .ppk-drop__box i:before {
   content: "\e602";
 }
 
-/* line 27, ../../styles/ui/_icons.scss */
-.icon-download:before {
-  content: "\e603";
+/* line 20, ../../styles/ui/_icons.scss */
+.icon-switch:before, .haiku__close-btn i:before {
+  content: "\e60b";
 }
 
-/* line 30, ../../styles/ui/_icons.scss */
-.icon-cloud-download:before {
-  content: "\e605";
+/* line 23, ../../styles/ui/_icons.scss */
+.icon-gamepad:before, .haiku__remote-btn i:before {
+  content: "\e612";
 }
 
-/* line 33, ../../styles/ui/_icons.scss */
-.icon-arrow-left:before, .haiku__close-btn i:before {
-  content: "\e606";
+/* line 26, ../../styles/ui/_icons.scss */
+.icon-upload:before, .haiku__loading-btn i:before {
+  content: "\e613";
 }
 
-/* line 36, ../../styles/ui/_icons.scss */
-.icon-upload:before {
-  content: "\e607";
+/* line 29, ../../styles/ui/_icons.scss */
+.icon-hourglass:before {
+  content: "\e614";
 }
 
-/* line 39, ../../styles/ui/_icons.scss */
-.icon-upload2:before {
-  content: "\e608";
-}
-
-/* line 42, ../../styles/ui/_icons.scss */
-.icon-arrow-up:before {
-  content: "\e609";
-}
-
-/* line 45, ../../styles/ui/_icons.scss */
+/* line 32, ../../styles/ui/_icons.scss */
 .icon-export:before, .haiku__share-btn i:before {
   content: "\e604";
 }
 
-/* line 48, ../../styles/ui/_icons.scss */
-.icon-wifi-full:before, .haiku__remote-btn i:before {
+/* line 35, ../../styles/ui/_icons.scss */
+.icon-wifi-full:before {
   content: "\e60a";
 }
 
@@ -6763,6 +6743,68 @@ label,
  * Objects and abstractions
  */
 /*------------------------------------*\
+    $GRIDS
+\*------------------------------------*/
+/**
+ * Fluid and nestable grid system, e.g.:
+ *
+   <div class="grid">
+
+       <div class="grid__item  one-third">
+           <p>One third grid</p>
+       </div><!--
+
+    --><div class="grid__item  two-thirds">
+           <p>Two thirds grid</p>
+       </div><!--
+
+    --><div class="grid__item  one-half">
+           <p>One half grid</p>
+       </div><!--
+
+    --><div class="grid__item  one-quarter">
+           <p>One quarter grid</p>
+       </div><!--
+
+    --><div class="grid__item  one-quarter">
+           <p>One quarter grid</p>
+       </div>
+
+   </div>
+ *
+ * Demo: jsfiddle.net/inuitcss/CLYUC
+ *
+ */
+/**
+ * Grid wrapper
+ */
+/* line 41, ../../vendor/inuit.css/objects/_grids.scss */
+.grid {
+  margin-left: -24px;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+/**
+ * Very infrequently occuring grid wrappers as children of grid wrappers.
+ */
+/* line 51, ../../vendor/inuit.css/objects/_grids.scss */
+.grid > .grid {
+  margin-left: 0;
+}
+
+/**
+ * Grid
+ */
+/* line 59, ../../vendor/inuit.css/objects/_grids.scss */
+.grid__item {
+  display: inline-block;
+  width: 100%;
+  padding-left: 24px;
+  vertical-align: top;
+}
+
+/*------------------------------------*\
     $FLEXBOX
 \*------------------------------------*/
 /**
@@ -6797,7 +6839,7 @@ label,
  *
  */
 /* line 37, ../../vendor/inuit.css/objects/_flexbox.scss */
-.flexbox {
+.flexbox, .haiku-share__modal-wrapper, .send-remote-url {
   display: table;
   width: 100%;
 }
@@ -6806,13 +6848,13 @@ label,
  * Nasty hack to circumvent Modernizr conflicts.
  */
 /* line 45, ../../vendor/inuit.css/objects/_flexbox.scss */
-html.flexbox {
+html.flexbox, html.haiku-share__modal-wrapper, html.send-remote-url {
   display: block;
   width: auto;
 }
 
 /* line 50, ../../vendor/inuit.css/objects/_flexbox.scss */
-.flexbox__item {
+.flexbox__item, .haiku-share__form, .haiku-share__qr, .send-remote-url__input, .send-remote-url__qr {
   display: table-cell;
   vertical-align: middle;
 }
@@ -8465,11 +8507,6 @@ html.flexbox {
   -moz-transition: 0.2s box-shadow;
   -o-transition: 0.2s box-shadow;
   transition: 0.2s box-shadow;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(255, 255, 255, 0.1)), color-stop(100%, rgba(255, 255, 255, 0)));
-  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-  background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-  background-image: linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
 }
 /* line 10, ../../styles/ui/_buttons.scss */
 .btn:active, .haiku-share__add:active, .btn.active, .active.haiku-share__add {
@@ -8496,12 +8533,12 @@ html.flexbox {
 
 /* line 30, ../../styles/ui/_buttons.scss */
 .btn--positive, .haiku-share__add {
-  background-color: #2ecc71;
+  background-color: #1f9838;
 }
 
 /* line 34, ../../styles/ui/_buttons.scss */
 .btn--negative {
-  background-color: #eb6453;
+  background-color: #d12835;
 }
 
 /* line 38, ../../styles/ui/_buttons.scss */
@@ -8526,7 +8563,7 @@ html.flexbox {
   -webkit-appearance: none;
   color: #161927;
   border-radius: 4px;
-  background-color: #fefefe;
+  background-color: rgba(254, 254, 254, 0.85);
   border: 1px solid #cacfd4;
   line-height: 2;
   padding: 0 .5em 1px;
@@ -8566,12 +8603,20 @@ html.flexbox {
   bottom: 0;
 }
 
-/* line 20, ../../styles/ui/_haiku.scss */
+/* line 18, ../../styles/ui/_haiku.scss */
+.haiku {
+  -webkit-perspective: 600;
+  -moz-perspective: 600;
+  -ms-perspective: 600;
+  -o-perspective: 600;
+  perspective: 600;
+}
+/* line 21, ../../styles/ui/_haiku.scss */
 .haiku, .haiku * {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-/* line 27, ../../styles/ui/_haiku.scss */
+/* line 28, ../../styles/ui/_haiku.scss */
 .haiku-loading {
   position: absolute;
   left: 0;
@@ -8581,7 +8626,7 @@ html.flexbox {
   background-color: rgba(254, 254, 254, 0.6);
 }
 
-/* line 36, ../../styles/ui/_haiku.scss */
+/* line 37, ../../styles/ui/_haiku.scss */
 .haiku-loading__label {
   font-weight: 300;
   text-align: center;
@@ -8791,29 +8836,34 @@ html.flexbox {
   position: absolute;
   right: 10px;
   top: 10px;
-  width: 32px;
+  width: 40px;
   text-align: right;
 }
 
 /* line 111, ../../styles/ui/haiku/_nav.scss */
-.haiku__share-btn, .haiku__remote-btn, .haiku__close-btn {
-  width: 32px;
-  height: 32px;
+.haiku__share-btn, .haiku__loading-btn, .haiku__remote-btn, .haiku__close-btn {
+  width: 40px;
+  height: 40px;
   display: block;
   padding: 0;
-  line-height: 30px;
+  line-height: 38px;
   border: none;
   background: rgba(0, 0, 0, 0.3);
   color: rgba(254, 254, 254, 0.7);
   margin-bottom: 0;
   font-size: 18px;
+  -webkit-animation: bounceIn 0.4s linear 0 both;
+  -moz-animation: bounceIn 0.4s linear 0 both;
+  -ms-animation: bounceIn 0.4s linear 0 both;
+  -o-animation: bounceIn 0.4s linear 0 both;
+  animation: bounceIn 0.4s linear 0 both;
 }
-/* line 130, ../../styles/ui/haiku/_nav.scss */
-.haiku__share-btn:focus, .haiku__remote-btn:focus, .haiku__close-btn:focus {
+/* line 131, ../../styles/ui/haiku/_nav.scss */
+.haiku__share-btn:focus, .haiku__loading-btn:focus, .haiku__remote-btn:focus, .haiku__close-btn:focus {
   outline: none;
 }
-/* line 134, ../../styles/ui/haiku/_nav.scss */
-.haiku__share-btn:active, .haiku__remote-btn:active, .haiku__close-btn:active {
+/* line 135, ../../styles/ui/haiku/_nav.scss */
+.haiku__share-btn:active, .haiku__loading-btn:active, .haiku__remote-btn:active, .haiku__close-btn:active {
   background-color: #fefefe;
   color: black;
 }
@@ -8825,7 +8875,27 @@ html.flexbox {
   font-weight: 100;
 }
 
-/* line 1, ../../styles/ui/haiku/modals/_share.scss */
+/* line 6, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__form {
+  width: 100%;
+}
+
+/* line 11, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__qr {
+  vertical-align: top;
+  padding-left: 10px;
+}
+/* line 15, ../../styles/ui/haiku/modals/_share.scss */
+.haiku-share__qr img {
+  border-radius: 15px;
+  -webkit-animation: fadeIn 0.5s linear 0.7s both;
+  -moz-animation: fadeIn 0.5s linear 0.7s both;
+  -ms-animation: fadeIn 0.5s linear 0.7s both;
+  -o-animation: fadeIn 0.5s linear 0.7s both;
+  animation: fadeIn 0.5s linear 0.7s both;
+}
+
+/* line 21, ../../styles/ui/haiku/modals/_share.scss */
 .haiku-share__emails {
   list-style-type: none;
   padding: 10px;
@@ -8838,7 +8908,7 @@ html.flexbox {
   overflow-y: auto;
 }
 
-/* line 14, ../../styles/ui/haiku/modals/_share.scss */
+/* line 34, ../../styles/ui/haiku/modals/_share.scss */
 .haiku-share__email {
   cursor: default;
   padding: 0 0 1px 1em;
@@ -8857,13 +8927,14 @@ html.flexbox {
   animation: fadeInLeft 0.3s;
 }
 
-/* line 35, ../../styles/ui/haiku/modals/_share.scss */
+/* line 51, ../../styles/ui/haiku/modals/_share.scss */
 .haiku-share__add-input {
+  background: rgba(254, 254, 254, 0.85);
   margin-right: 1em;
   width: 50%;
 }
 
-/* line 41, ../../styles/ui/haiku/modals/_share.scss */
+/* line 58, ../../styles/ui/haiku/modals/_share.scss */
 .haiku-share__remove {
   background: transparent;
   border: none;
@@ -8871,9 +8942,26 @@ html.flexbox {
   margin-right: 0;
 }
 
-/* line 55, ../../styles/ui/haiku/modals/_share.scss */
+/* line 72, ../../styles/ui/haiku/modals/_share.scss */
 .input--paste {
   vertical-align: middle;
+}
+
+/* line 9, ../../styles/ui/haiku/modals/_send-remote-url.scss */
+.send-remote-url__qr {
+  padding-left: 10px;
+}
+/* line 12, ../../styles/ui/haiku/modals/_send-remote-url.scss */
+.send-remote-url__qr img {
+  vertical-align: middle;
+  width: 90px;
+  height: 90px;
+  border-radius: 15px;
+  -webkit-animation: fadeIn 0.6s linear 0.6s both;
+  -moz-animation: fadeIn 0.6s linear 0.6s both;
+  -ms-animation: fadeIn 0.6s linear 0.6s both;
+  -o-animation: fadeIn 0.6s linear 0.6s both;
+  animation: fadeIn 0.6s linear 0.6s both;
 }
 
 /* line 3, ../../styles/ui/_drop.scss */
@@ -8881,7 +8969,7 @@ html.flexbox {
   width: 100%;
   height: 100%;
   position: absolute;
-  transition: .3s all;
+  transition: .7s all;
 }
 /* line 13, ../../styles/ui/_drop.scss */
 .ppk-drop__box i {
@@ -8890,7 +8978,7 @@ html.flexbox {
   font-size: 96px;
   width: 96px;
   height: 96px;
-  transition: .3s all ease-out 0;
+  transition: .4s all ease-out 0;
   margin-bottom: 20px;
 }
 /* line 25, ../../styles/ui/_drop.scss */
@@ -8914,16 +9002,24 @@ html.flexbox {
 .ppk-drop__box.is-file-over i {
   opacity: 1;
   color: #fefefe;
+}
+/* line 50, ../../styles/ui/_drop.scss */
+.ppk-drop__box.is-file-over .ppk-drop__info {
   -webkit-transform: translate(-50%, -50%) rotate(180deg);
+  -moz-transform: translate(-50%, -50%) rotate(180deg);
+  -ms-transform: translate(-50%, -50%) rotate(180deg);
+  -o-transform: translate(-50%, -50%) rotate(180deg);
+  transform: translate(-50%, -50%) rotate(180deg);
+  transition: .4s ease .4s;
 }
 
-/* line 54, ../../styles/ui/_drop.scss */
+/* line 59, ../../styles/ui/_drop.scss */
 .ppk-drop__input {
   opacity: 0;
   visibility: hidden;
 }
 
-/* line 60, ../../styles/ui/_drop.scss */
+/* line 65, ../../styles/ui/_drop.scss */
 .ppk-drop__info {
   width: 96px;
   height: 96px;
@@ -8931,9 +9027,20 @@ html.flexbox {
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: .4s ease 0s;
+  -webkit-animation: fadeIn 1.5s ease 0s both;
+  -moz-animation: fadeIn 1.5s ease 0s both;
+  -ms-animation: fadeIn 1.5s ease 0s both;
+  -o-animation: fadeIn 1.5s ease 0s both;
+  animation: fadeIn 1.5s ease 0s both;
 }
 
-/* line 69, ../../styles/ui/_drop.scss */
+/* line 77, ../../styles/ui/_drop.scss */
 .ppk-drop__upload-btn {
   border: 2px solid #fefefe;
   border-radius: 5px;
@@ -8942,12 +9049,12 @@ html.flexbox {
   color: #fefefe;
   line-height: 2em;
 }
-/* line 77, ../../styles/ui/_drop.scss */
+/* line 85, ../../styles/ui/_drop.scss */
 .ppk-drop__upload-btn:active {
   background: #fefefe;
   color: #e74c3c;
 }
-/* line 82, ../../styles/ui/_drop.scss */
+/* line 90, ../../styles/ui/_drop.scss */
 .ppk-drop__upload-btn:focus {
   outline: none;
 }
@@ -8981,7 +9088,7 @@ html.flexbox {
 /* line 22, ../../styles/ui/_notify.scss */
 .toast-info {
   background-color: #fefefe;
-  border: 1px solid #fdfbfa;
+  border: 1px solid #7f748c;
 }
 
 /* line 27, ../../styles/ui/_notify.scss */
@@ -9003,31 +9110,46 @@ html.flexbox {
   top: 50%;
   margin-top: -200px;
   background-color: #fefefe;
-  -webkit-animation: fadeInUp 0.3s ease 0s both;
-  -moz-animation: fadeInUp 0.3s ease 0s both;
-  -ms-animation: fadeInUp 0.3s ease 0s both;
-  -o-animation: fadeInUp 0.3s ease 0s both;
-  animation: fadeInUp 0.3s ease 0s both;
+  -webkit-animation: fadeInUp 0.6s ease 0s both;
+  -moz-animation: fadeInUp 0.6s ease 0s both;
+  -ms-animation: fadeInUp 0.6s ease 0s both;
+  -o-animation: fadeInUp 0.6s ease 0s both;
+  animation: fadeInUp 0.6s ease 0s both;
+  overflow: hidden;
 }
-/* line 16, ../../styles/ui/_modal.scss */
+/* line 17, ../../styles/ui/_modal.scss */
 .modal .btn, .modal .haiku-share__add {
   margin-right: 1em;
 }
 
-/* line 22, ../../styles/ui/_modal.scss */
+/* line 26, ../../styles/ui/_modal.scss */
+.modal__icon {
+  line-height: 1;
+  position: absolute;
+  left: 25%;
+  top: 50%;
+  margin-top: -235px;
+  margin-left: -235px;
+  font-size: 470px;
+  color: #7f748c;
+  opacity: .1;
+  z-index: -1;
+}
+
+/* line 42, ../../styles/ui/_modal.scss */
 .modal__title, .modal__body, .modal__footer {
   margin: 0 auto 1.6rem;
   max-width: 640px;
 }
 
-/* line 49, ../../styles/ui/_modal.scss */
+/* line 69, ../../styles/ui/_modal.scss */
 .modal-backdrop {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 /* line 1, ../../styles/ui/_import.scss */

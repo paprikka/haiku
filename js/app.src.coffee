@@ -10,13 +10,25 @@ angular.module('app.controllers', [])
   '$scope'
   '$location'
   '$rootScope'
+  'Modal'
 
 
-  ($scope, $location, $rootScope) ->
+  ($scope, $location, $rootScope, Modal) ->
 
 
     $scope.application =
       initialized: yes
+
+
+    # TODO: add generic error messages
+    # $scope.onError = (data)-> 
+    #   Modal.alert 'Something went wrong :(', 'An unexpected error has occured. You can still use your Haikµ locally, but some viewers might be out of sync. '
+        
+    # $rootScope.$on 'haiku:error', $scope.onError
+
+
+
+
 
 
     # TODO: enable watch unit testing on Karma
@@ -56,7 +68,31 @@ angular.module("app.common.services.Modal", ['ui.bootstrap', 'ui.bootstrap.tpls'
   ($modal)->
     window.m = $modal
 
-    $modal
+    methods =
+      alert : (title, body, icon)->
+        alertCtrl = ($scope, $modalInstance, data) ->
+          $scope.data = data
+          $scope.close = -> $modalInstance.dismiss 'close'
+          $scope.getIconClass = ->
+            if data.icon 
+              'icon-' + data.icon 
+            else 
+              ''
+
+
+        modalInstance = $modal.open
+          templateUrl: 'common/partials/modals/alert.html'
+          controller: alertCtrl
+          resolve:
+            data: -> 
+              title: title or 'Message'
+              body: body
+              icon: icon
+
+        modalInstance.result.then ->
+
+
+    _.extend $modal, methods
 ])
 .service('ModalDefaults', ->
   settings = 
@@ -89,6 +125,16 @@ angular.module('app.common.services.pageState', []).service( 'PageState', [
 
 ])
 
+angular.module('app.common.services.CORS', [])
+.config(['$httpProvider', ($httpProvider)->
+  # ## Cross-Origin Resource Sharing
+  # Enables easy support for different request methods, otherwise
+  # we would have to use JSONP requests
+  console.log 'common.services.CORSService enabled.'
+  delete $httpProvider.defaults.headers.common['X-Requested-With']
+  delete $httpProvider.defaults.headers.common['Content-Type']
+])
+
 angular.module('app.common.webSockets', []).service('WebSockets', [
   '$window'
   ($window)->
@@ -96,8 +142,11 @@ angular.module('app.common.webSockets', []).service('WebSockets', [
 ])
 angular.module('pl.paprikka.directives.drop', [])
 .directive('ppkDrop', [
+
   '$window'
-  ($window)->
+  'Modal'
+
+  ($window, Modal)->
     restrict:     'AE'
     templateUrl:  'drop/drop.html'
     replace:      yes
@@ -125,8 +174,14 @@ angular.module('pl.paprikka.directives.drop', [])
         e.preventDefault()
       
       
-      
-
+      messages =
+        unsupportedType:
+          title: 'Unsupported file type'
+          body: """
+            Use Markdown (*.md, *.txt) or images to create a Haikµ. <br>
+            Like to see a different format / feature here? <a href="mailto:gethaiku@gmail.com">Let us know</a>!
+          """
+          icon: 'upload'
       
       onDrop = (e) ->
         e.stopPropagation()
@@ -136,13 +191,7 @@ angular.module('pl.paprikka.directives.drop', [])
           scope.files = dt.files
           scope.isFileOver = no
 
-        if dt.files?[0]
-          type = getFileType dt.files[0]            
-
-          if type is 'text'
-            getTextFiles dt.files[0], scope.onDrop
-          if type is 'images'
-            getImageFiles dt.files, scope.onDrop
+        scope.handleUpload dt
 
 
       # MIME type helper functions
@@ -203,9 +252,9 @@ angular.module('pl.paprikka.directives.drop', [])
             getTextFiles dt.files[0], scope.onDrop
           else if type is 'images'
             getImageFiles dt.files, scope.onDrop
-          # TODO: add unsupported format message
-          # else
-          #   $window.alert 'Please insert Markdown or images'
+          else
+            m = messages.unsupportedType
+            Modal.alert m.title, m.body, m.icon
 
       scope.supportsUploadClickDelegation = !!$window.navigator.userAgent.match(/(iPod|iPhone|iPad)/) && $window.navigator.userAgent.match(/AppleWebKit/)
 
@@ -222,21 +271,23 @@ angular.module('pl.paprikka.directives.drop', [])
 angular.module('pl.paprikka.haiku', [
 
   'ngSanitize'
-  
+
   'app.common.services.pageState'
+  'app.common.services.CORS'
   'pl.paprikka.directives.haiku'
   'pl.paprikka.directives.drop'
   'pl.paprikka.haiku.directives.nav'
   'pl.paprikka.directives.haiku.hTap'
 
-  'pl.paprikka.services.hammerjs' 
-  'pl.paprikka.haiku.services.remote' 
+  'pl.paprikka.services.hammerjs'
+  'pl.paprikka.haiku.services.remote'
   'pl.paprikka.haiku.services.slides'
 
   'pl.paprikka.haiku.controllers.import'
   'pl.paprikka.haiku.controllers.play'
   'pl.paprikka.haiku.controllers.view'
 ])
+
 angular.module('pl.paprikka.haiku.controllers.import', [
   'pl.paprikka.haiku.services.importer'
   'app.common.services.Notify'
@@ -253,21 +304,26 @@ angular.module('pl.paprikka.haiku.controllers.import', [
   ( Importer, $location, $rootScope, $scope, Remote, Modal, Notify )->
     $rootScope.categories   = []
     $scope.files            = []
+    $scope.state = 'idle'
 
     $scope.mdSupported = if navigator.userAgent.match /(iPad|iPhone|iPod)/g then no else yes
 
-    $rootScope.$on 'haiku:room:accepted', (e, data) ->
-      $rootScope.clientRole = 'host'
-      $location.path '/play/' + data.room
-      $scope.$apply()
-
+    Remote.connect()
+    
     $scope.initConnection = (categories)->
       Remote.request categories
 
     $scope.onFileDropped = (data)->
-
+      unless $scope.$$phase then $scope.$apply -> $scope.state = 'sending'
       _.defer -> $scope.$apply ->
+
+        $rootScope.$on 'haiku:room:accepted', (e, data) ->
+          $rootScope.clientRole = 'host'
+          $location.path '/play/' + data.room
+          $scope.$apply()
+
         $rootScope.categories = Importer.getFromFiles data
+        window.categories = $rootScope.categories
         if $rootScope.categories.length
           $scope.initConnection $rootScope.categories
 
@@ -281,7 +337,7 @@ angular.module('pl.paprikka.haiku.controllers.import', [
 
 
 ])
-angular.module('pl.paprikka.haiku.controllers.play', [
+HaikuPlayCtrl = angular.module('pl.paprikka.haiku.controllers.play', [
 
   # 'pl.paprikka.haiku.directives.nav'
   'app.common.services.Modal'
@@ -312,13 +368,15 @@ angular.module('pl.paprikka.haiku.controllers.play', [
     $rootScope.$on 'haiku:remote:URLShared', ->
       Notify.info 'Invitations sent.'
 
+    $rootScope.$on 'haiku:room:readyToShare', ->
+      Notify.info 'Haiku is ready to share.'
+
     $rootScope.$on 'haiku:remote:URLSent', ->
       Notify.info 'Remote bookmark sent.'
 
     $rootScope.$on 'haiku:room:remoteJoined', ->
       console.log 'Haiku::Remote joined, sending current status...'
       $scope.updateStatus Slides.package $scope.categories
-      # $scope.updateStatus $scope.status
       Notify.info 'Remote connected.'
 
     $rootScope.$on 'haiku:room:guestJoined', ->
@@ -330,11 +388,24 @@ angular.module('pl.paprikka.haiku.controllers.play', [
 
 
 
+
+
+
+
+
+
     # TODO: move to Modal.prompt service
     sendCtrl = ($scope, $modalInstance) ->
       $scope.result = {}
-      $scope.ok = ->
-        $modalInstance.close $scope.result.email
+      $scope.currentEncodedURL = encodeURIComponent haiku.config.remoteURL + '/#/' + $routeParams.roomID
+
+      onConnected = $rootScope.$on 'haiku:room:remoteJoined', ->
+        $scope.cancel()
+        onConnected()
+        
+      $scope.ok = (isOK)->
+        if isOK
+          $modalInstance.close $scope.result.email
       $scope.cancel = -> $modalInstance.dismiss 'cancel'
 
 
@@ -350,12 +421,22 @@ angular.module('pl.paprikka.haiku.controllers.play', [
 
 
 
+
+
+
+
+
+
     shareCtrl = ($scope, $modalInstance) ->
       $scope.newEmail = value: ''
       $scope.emails = []
+
+
+
       getCurrentURL = ->
         location.toString().replace(/#\/play\//i, "#/view/")
       $scope.currentURL = getCurrentURL()
+      $scope.currentEncodedURL = encodeURIComponent $scope.currentURL
 
       $scope.add = (email) ->
         if email?.length
@@ -386,17 +467,27 @@ angular.module('pl.paprikka.haiku.controllers.play', [
 
 
 
+
+
+
+
+
+
+
+
+
+
     $location.path('/') unless $rootScope.categories?.length
     $scope.navVisible = yes
 
 ])
-
 angular.module('pl.paprikka.haiku.controllers.view', [
 
   # 'pl.paprikka.haiku.directives.nav'
 
 ]).controller('HaikuViewCtrl', [
 
+  '$http'
   '$location'
   '$routeParams'
   '$rootScope'
@@ -404,7 +495,7 @@ angular.module('pl.paprikka.haiku.controllers.view', [
   '$timeout'
   'Remote'
 
-  ( $location, $routeParams, $rootScope, $scope, $timeout, Remote )->
+  ( $http, $location, $routeParams, $rootScope, $scope, $timeout, Remote )->
 
     $scope.status = 'loading'
 
@@ -416,15 +507,17 @@ angular.module('pl.paprikka.haiku.controllers.view', [
     Remote.join $routeParams.roomID
 
     $rootScope.$on 'haiku:room:joined', (scope, data) ->
-      Remote.broadcastJoinedGuest data.room
-      $scope.$apply ->
-        $rootScope.categories = data.categories
+      onDataLoaded = (res)->
+        Remote.broadcastJoinedGuest data.room
+        $rootScope.categories = res.categories
         $scope.status = 'ready'
 
         showUI = ->
           $scope.UIReady = yes
 
         $timeout showUI, 2000
+
+      $http.get(data.categories).success onDataLoaded
 
 
 
@@ -471,11 +564,12 @@ angular.module('pl.paprikka.directives.haiku-import', [
 angular.module('pl.paprikka.directives.haiku', []).directive('haiku', [
 
   '$window'
+  '$sce'
   'Hammer'
   'Slides'
   '$rootScope'
 
-  ( $window, Hammer, Slides, $rootScope )->
+  ( $window, $sce, Hammer, Slides, $rootScope )->
     scope:
       categories: '='
       onUpdate: '&'
@@ -670,6 +764,9 @@ angular.module('pl.paprikka.haiku.directives.nav', [
 
     link: (scope, elm, attr) ->
 
+      $rootScope.$on 'haiku:room:readyToShare', -> 
+        scope.$apply -> scope.readyToShare = yes
+
       scope.clientRole = $rootScope.clientRole
       
       scope.goto = (slide) -> 
@@ -753,8 +850,7 @@ angular.module('pl.paprikka.haiku.services.importer', [
       newCategories = []
 
       _.each categoryBodies, (cat) ->
-        slidesContents  = cat.replace(/<h1>/gi, '__PAGE_BREAK__<h1>').split '__PAGE_BREAK__'
-
+        slidesContents  = cat.replace(/<h1.*?>/gi, '__PAGE_BREAK__<h1>').split '__PAGE_BREAK__'
         newCategory     = slides: []
 
         _.each slidesContents, (sc) ->
@@ -791,7 +887,9 @@ angular.module('pl.paprikka.haiku.services.importer', [
         Importer.getFromMarkdown files.data
       else if files.type is 'images'
         Importer.getFromImages files.data
-      else []
+      else
+        []
+      # TODO: move haikuDrop logic here?
     
     Importer.getFromMarkdown = (markdown) ->
       indexSlides markdownToSlides markdown
@@ -827,14 +925,23 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
 
     socket.on 'connect', ->
       console.log 'haiku::Remote::connected'
+      $rootScope.$apply()
+
+      socket.on 'room:readyToShare', (data)->
+        $rootScope.$emit 'haiku:room:readyToShare', data
+
+      socket.on 'error', (data)->
+        console.error 'Socket error', data
+        $rootScope.$emit 'haiku:error', data
+
       socket.on 'remote', (data) ->
         $rootScope.$emit 'haiku:remote:control', data
 
-      socket.on 'room:remoteJoined', _.throttle ((data)->
-        $rootScope.$emit 'haiku:room:remoteJoined', data), 100
+      socket.on 'room:remoteJoined', (data)->
+        $rootScope.$emit 'haiku:room:remoteJoined', data
 
-      socket.on 'room:guestJoined', _.throttle ((data)->
-        $rootScope.$emit 'haiku:room:guestJoined', data), 100
+      socket.on 'room:guestJoined', (data)->
+        $rootScope.$emit 'haiku:room:guestJoined', data
 
       socket.on 'room:accepted', (data)->
         $rootScope.$emit 'haiku:room:accepted', data
@@ -849,6 +956,15 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
         $rootScope.$emit 'haiku:remote:URLShared', data
 
 
+    clearListeners = ->
+      listeners = $rootScope.$$listeners
+      _.forIn listeners, (value, key) ->
+        if key.split(':')[0] is 'haiku'
+          $rootScope.$$listeners[key] = null
+      
+      
+      
+      
 
     Remote =
       join : (room) ->
@@ -863,6 +979,9 @@ angular.module('pl.paprikka.haiku.services.remote', ['app.common.webSockets']).s
         socket.emit 'remote:shareURL', { room, to }
       broadcastJoinedGuest: (room) ->
         socket.emit 'remote:guestJoined', { room }
+
+      connect: ->
+        clearListeners()
 
 
 
@@ -904,6 +1023,8 @@ App = angular.module('app', [
   'templates'
   'ngCookies'
   'ngResource'
+  'ngRoute'
+  'ngRoute'
 
 
   # ## Application components
@@ -957,7 +1078,7 @@ App.config([
       .otherwise({redirectTo: '/404'})
 
     # Without server side setup html5 pushState support must be disabled.
-    $locationProvider.html5Mode off
+    $locationProvider.html5Mode off # Boo IE9, booo!
 
 
 

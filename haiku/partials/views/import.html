@@ -1,4 +1,9 @@
 
 <div class="haiku-import"><a href="examples/categories.md" target="_blank" download="Drag me to the browser window.md" ng-show="mdSupported" class="import__example">Get example haiku</a>
-  <ppk-drop on-drop="onFileDropped(file)" files="files"></ppk-drop>
+  <div ng-show="state == 'idle'">
+    <ppk-drop on-drop="onFileDropped(file)" files="files"></ppk-drop>
+  </div>
+  <div ng-show="state == 'sending'" class="haiku-loading">
+    <div class="haiku-loading__label">Loading...</div>
+  </div>
 </div>

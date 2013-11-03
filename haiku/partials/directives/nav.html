@@ -3,7 +3,8 @@
   <div class="haiku-nav__tools">
     <button ng-show="clientRole == 'host'" h-tap="close()" class="haiku__close-btn"><i></i></button>
     <button ng-show="clientRole == 'host'" h-tap="enableRemote()" class="haiku__remote-btn"><i></i></button>
-    <button ng-show="clientRole == 'host'" h-tap="share()" class="haiku__share-btn"><i></i></button>
+    <button ng-show="(clientRole == 'host') &amp;&amp; readyToShare" h-tap="share()" class="haiku__share-btn"><i></i></button>
+    <button ng-show="(clientRole == 'host') &amp;&amp; !readyToShare" class="haiku__loading-btn"><i></i></button>
   </div>
   <ol ng-show="categories.length &gt; 1" class="haiku-nav__categories">
     <li ng-repeat="category in categories" ng-class="{ 'haiku-nav__category--current' : currentCategory == isCurrentCategory(category) }" class="haiku-nav__category">
