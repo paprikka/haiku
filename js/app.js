@@ -139,6 +139,48 @@ angular.module('app.common.services.CORS', []).config([
   }
 ]);
 
+angular.module('app.common.services.Resizer', []).service('Resizer', [
+  '$q', function($q) {
+    var Resizer;
+    Resizer = function() {};
+    Resizer.prototype.resize = function(img, options) {
+      var canvas, context, defaults, deferred, height, resized, width;
+      deferred = $q.defer();
+      defaults = {
+        maxSize: 1024
+      };
+      options = _.extend(defaults, options);
+      canvas = document.createElement('canvas');
+      context = canvas.getContext('2d');
+      width = img.width;
+      height = img.height;
+      if (width > height) {
+        if (width > options.maxSize) {
+          height = height * options.maxSize / width;
+          width = options.maxSize;
+        }
+      } else {
+        if (height > options.maxSize) {
+          width = width * options.maxSize / height;
+          height = options.maxSize;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      context.drawImage(img, 0, 0, width, height);
+      console.log('Resizer::resize, working...');
+      resized = {
+        img: canvas.toDataURL('image/jpeg', {
+          quality: .1
+        })
+      };
+      deferred.resolve(resized);
+      return deferred.promise;
+    };
+    return new Resizer;
+  }
+]);
+
 angular.module('app.common.webSockets', []).service('WebSockets', [
   '$window', function($window) {
     return window.io;
@@ -175,7 +217,7 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
         messages = {
           unsupportedType: {
             title: 'Unsupported file type',
-            body: "Use Markdown (*.md, *.txt) or images to create a Haikµ. <br>\nLike to see a different format / feature here? <a href=\"mailto:gethaiku@gmail.com\">Let us know</a>!",
+            body: "Use Markdown (*.md, *.txt) or images to create a Haikµ. <br>\nLike to see a different format / feature here? <a target=\"_blank\" href=\"mailto:gethaiku@gmail.com\">Let us know</a>!",
             icon: 'upload'
           }
         };
@@ -300,12 +342,14 @@ angular.module('pl.paprikka.haiku.controllers.import', ['pl.paprikka.haiku.servi
             $location.path('/play/' + data.room);
             return $scope.$apply();
           });
-          $rootScope.categories = Importer.getFromFiles(data);
-          window.categories = $rootScope.categories;
-          if ($rootScope.categories.length) {
-            $scope.initConnection($rootScope.categories);
-          }
-          return console.log('Categories loaded: ', $scope.categories);
+          return Importer.getFromFiles(data).then(function(result) {
+            $rootScope.categories = result;
+            window.categories = $rootScope.categories;
+            if ($rootScope.categories.length) {
+              $scope.initConnection($rootScope.categories);
+            }
+            return console.log('Categories loaded: ', $scope.categories);
+          });
         });
       });
     };
@@ -718,8 +762,8 @@ angular.module('pl.paprikka.services.hammerjs', []).factory('Hammer', [
   }
 ]);
 
-angular.module('pl.paprikka.haiku.services.importer', ['pl.paprikka.services.markdown']).factory('Importer', [
-  'Markdown', function(Markdown) {
+angular.module('pl.paprikka.haiku.services.importer', ['pl.paprikka.services.markdown', 'app.common.services.Resizer']).factory('Importer', [
+  'Markdown', 'Resizer', '$q', function(Markdown, Resizer, $q) {
     var Importer, defaultColors, indexSlides, markdown, markdownToSlides;
     defaultColors = ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e', '#16a085', '#27ae60', '#2980b9', '#8e44ad', '#2c3e50', '#95a5a6', '#d35400', '#c0392b', '#7f8c8d'];
     markdown = "";
@@ -782,32 +826,45 @@ angular.module('pl.paprikka.haiku.services.importer', ['pl.paprikka.services.mar
       return indexSlides(markdownToSlides(markdown));
     };
     Importer.getFromFiles = function(files) {
+      var deferred, result;
+      deferred = $q.defer();
       if (files.type === 'text') {
-        return Importer.getFromMarkdown(files.data);
+        result = Importer.getFromMarkdown(files.data);
+        deferred.resolve(result);
       } else if (files.type === 'images') {
-        return Importer.getFromImages(files.data);
+        Importer.getFromImages(files.data, deferred);
       } else {
-        return [];
+        [];
       }
+      return deferred.promise;
     };
     Importer.getFromMarkdown = function(markdown) {
       return indexSlides(markdownToSlides(markdown));
     };
-    Importer.getFromImages = function(images) {
+    Importer.getFromImages = function(images, deferred) {
       var categories;
       categories = [
         {
           slides: []
         }
       ];
-      _.each(images, function(img) {
-        var slide;
-        slide = {
-          background: 'url(' + img + ')'
+      return _.each(images, function(img) {
+        var imgEl;
+        imgEl = new Image;
+        imgEl.onload = function() {
+          return Resizer.resize(imgEl).then(function(resized) {
+            var slide;
+            slide = {
+              background: 'url(' + resized.img + ')'
+            };
+            categories[0].slides.push(slide);
+            if (categories[0].slides.length === images.length) {
+              return deferred.resolve(indexSlides(categories));
+            }
+          });
         };
-        return categories[0].slides.push(slide);
+        return imgEl.src = img;
       });
-      return indexSlides(categories);
     };
     return Importer;
   }

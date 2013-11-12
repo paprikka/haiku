@@ -8638,6 +8638,41 @@ html.flexbox, html.haiku-share__modal-wrapper, html.send-remote-url {
   top: 50%;
 }
 
+/* line 49, ../../styles/ui/_haiku.scss */
+.haiku-loading__spinner {
+  -webkit-animation: rotate 1s linear 0s both infinite;
+  -moz-animation: rotate 1s linear 0s both infinite;
+  -ms-animation: rotate 1s linear 0s both infinite;
+  -o-animation: rotate 1s linear 0s both infinite;
+  animation: rotate 1s linear 0s both infinite;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 2px solid #7f748c;
+  border-left-color: transparent;
+  display: inline-block;
+}
+
+@-webkit-keyframes rotate {
+  /* line 63, ../../styles/ui/_haiku.scss */
+  0% {
+    -webkit-transform: rotate(0);
+    -moz-transform: rotate(0);
+    -ms-transform: rotate(0);
+    -o-transform: rotate(0);
+    transform: rotate(0);
+  }
+
+  /* line 64, ../../styles/ui/_haiku.scss */
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
 /* line 2, ../../styles/ui/haiku/_categories.scss */
 .haiku__categories {
   list-style: none;
@@ -9110,11 +9145,11 @@ html.flexbox, html.haiku-share__modal-wrapper, html.send-remote-url {
   top: 50%;
   margin-top: -200px;
   background-color: #fefefe;
-  -webkit-animation: fadeInUp 0.6s ease 0s both;
-  -moz-animation: fadeInUp 0.6s ease 0s both;
-  -ms-animation: fadeInUp 0.6s ease 0s both;
-  -o-animation: fadeInUp 0.6s ease 0s both;
-  animation: fadeInUp 0.6s ease 0s both;
+  -webkit-animation: fadeInUp 0.7s cubic-bezier(0.1, 0.7, 0.1, 1) 0.2s both;
+  -moz-animation: fadeInUp 0.7s cubic-bezier(0.1, 0.7, 0.1, 1) 0.2s both;
+  -ms-animation: fadeInUp 0.7s cubic-bezier(0.1, 0.7, 0.1, 1) 0.2s both;
+  -o-animation: fadeInUp 0.7s cubic-bezier(0.1, 0.7, 0.1, 1) 0.2s both;
+  animation: fadeInUp 0.7s cubic-bezier(0.1, 0.7, 0.1, 1) 0.2s both;
   overflow: hidden;
 }
 /* line 17, ../../styles/ui/_modal.scss */
@@ -9149,7 +9184,34 @@ html.flexbox, html.haiku-share__modal-wrapper, html.send-remote-url {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
+  -webkit-animation: fadeIn 0.7s ease 0s both;
+  -moz-animation: fadeIn 0.7s ease 0s both;
+  -ms-animation: fadeIn 0.7s ease 0s both;
+  -o-animation: fadeIn 0.7s ease 0s both;
+  animation: fadeIn 0.7s ease 0s both;
+}
+
+@-webkit-keyframes fallIn {
+  /* line 81, ../../styles/ui/_modal.scss */
+  0% {
+    -webkit-transform: scale(1.5);
+    -moz-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    transform: scale(1.5);
+    opacity: 0;
+  }
+
+  /* line 86, ../../styles/ui/_modal.scss */
+  100% {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* line 1, ../../styles/ui/_import.scss */

@@ -135,12 +135,60 @@ angular.module('app.common.services.CORS', [])
   delete $httpProvider.defaults.headers.common['Content-Type']
 ])
 
+angular.module('app.common.services.Resizer', []).service 'Resizer', [
+  '$q'
+  ( $q )->
+    Resizer = ->
+    Resizer::resize = (img, options) ->
+      deferred = $q.defer()
+
+      defaults = {
+        maxSize: 1024
+      }
+
+      options = _.extend defaults, options
+
+
+      canvas  = document.createElement 'canvas'
+      context = canvas.getContext '2d'
+
+      width   = img.width
+      height  = img.height
+
+      if width > height
+        if width > options.maxSize
+          height = height * options.maxSize / width
+          width  = options.maxSize
+      else
+        if height > options.maxSize
+          width   = width * options.maxSize / height
+          height  = options.maxSize
+    
+      canvas.width    = width
+      canvas.height   = height
+
+
+      context.drawImage img, 0, 0, width, height
+      console.log 'Resizer::resize, working...'
+    
+      resized = img: canvas.toDataURL 'image/jpeg', quality: .1
+      # resized.img.replace 'image/jpeg', 'image/octet-stream'
+
+      deferred.resolve resized
+      deferred.promise
+
+    new Resizer
+]
+
+  
+  
 angular.module('app.common.webSockets', []).service('WebSockets', [
   '$window'
   ($window)->
     window.io
 ])
-angular.module('pl.paprikka.directives.drop', [])
+angular.module('pl.paprikka.directives.drop', [ 
+])
 .directive('ppkDrop', [
 
   '$window'
@@ -152,7 +200,7 @@ angular.module('pl.paprikka.directives.drop', [])
     replace:      yes
     scope:
       onDrop: '&'
-      files: '='
+      files:  '='
     link: (scope, elm, attrs)->
       boxEl = elm.find('.ppk-drop__box')[0]
 
@@ -179,7 +227,7 @@ angular.module('pl.paprikka.directives.drop', [])
           title: 'Unsupported file type'
           body: """
             Use Markdown (*.md, *.txt) or images to create a Haikµ. <br>
-            Like to see a different format / feature here? <a href="mailto:gethaiku@gmail.com">Let us know</a>!
+            Like to see a different format / feature here? <a target="_blank" href="mailto:gethaiku@gmail.com">Let us know</a>!
           """
           icon: 'upload'
       
@@ -322,12 +370,15 @@ angular.module('pl.paprikka.haiku.controllers.import', [
           $location.path '/play/' + data.room
           $scope.$apply()
 
-        $rootScope.categories = Importer.getFromFiles data
-        window.categories = $rootScope.categories
-        if $rootScope.categories.length
-          $scope.initConnection $rootScope.categories
+        Importer.getFromFiles(data).then (result) ->
+          $rootScope.categories = result
+        
+        
+          window.categories = $rootScope.categories
+          if $rootScope.categories.length
+            $scope.initConnection $rootScope.categories
 
-        console.log 'Categories loaded: ', $scope.categories
+          console.log 'Categories loaded: ', $scope.categories
 
 
     
@@ -801,11 +852,14 @@ angular.module('pl.paprikka.services.hammerjs', []).factory('Hammer', [
 ])
 angular.module('pl.paprikka.haiku.services.importer', [
   'pl.paprikka.services.markdown'
+  'app.common.services.Resizer'
   ]).factory('Importer', [
 
   'Markdown'
+  'Resizer'
+  '$q'
 
-  (Markdown)->
+  ( Markdown, Resizer, $q )->
 
     defaultColors = [
       '#1abc9c'
@@ -883,25 +937,38 @@ angular.module('pl.paprikka.haiku.services.importer', [
       
     
     Importer.getFromFiles = (files) ->
+      deferred = $q.defer()
+
       if files.type is 'text'
-        Importer.getFromMarkdown files.data
+        result = Importer.getFromMarkdown files.data
+        deferred.resolve result
       else if files.type is 'images'
-        Importer.getFromImages files.data
+        Importer.getFromImages files.data, deferred
       else
         []
       # TODO: move haikuDrop logic here?
-    
+      deferred.promise
+      
     Importer.getFromMarkdown = (markdown) ->
       indexSlides markdownToSlides markdown
     
-    Importer.getFromImages = (images) ->
-      categories = [ {slides: []} ]    
+    Importer.getFromImages = (images, deferred) ->
+      categories = [ {slides: []} ]
       _.each images, (img) ->
-        slide =
-          background: 'url(' + img + ')'
-        categories[0].slides.push slide
 
-      indexSlides categories
+        imgEl = new Image
+        imgEl.onload = ->
+          Resizer.resize(imgEl).then (resized) ->
+            slide =
+              background: 'url(' + resized.img + ')'
+            categories[0].slides.push slide
+            if categories[0].slides.length is images.length
+              
+              deferred.resolve indexSlides categories
+
+        imgEl.src = img
+
+
       
      
     

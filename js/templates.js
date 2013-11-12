@@ -155,7 +155,7 @@ angular.module("haiku/partials/views/import.html", []).run(["$templateCache", fu
     "    <ppk-drop on-drop=\"onFileDropped(file)\" files=\"files\"></ppk-drop>\n" +
     "  </div>\n" +
     "  <div ng-show=\"state == 'sending'\" class=\"haiku-loading\">\n" +
-    "    <div class=\"haiku-loading__label\">Loading...</div>\n" +
+    "    <div class=\"haiku-loading__label\">L<span class=\"haiku-loading__spinner\"></span>ading...</div>\n" +
     "  </div>\n" +
     "</div>");
 }]);
@@ -169,7 +169,7 @@ angular.module("haiku/partials/views/play.html", []).run(["$templateCache", func
     "    <haiku-nav categories=\"categories\" visible=\"navVisible\" on-enable-remote=\"sendRemoteURL()\" on-share=\"shareURL()\"></haiku-nav>\n" +
     "  </div>\n" +
     "  <div ng-hide=\"UIReady\" class=\"haiku-loading\">\n" +
-    "    <div class=\"haiku-loading__label\">Loading...</div>\n" +
+    "    <div class=\"haiku-loading__label\">L<span class=\"haiku-loading__spinner\"></span>ading...</div>\n" +
     "  </div>\n" +
     "</div>");
 }]);
@@ -184,7 +184,7 @@ angular.module("haiku/partials/views/view.html", []).run(["$templateCache", func
     "      <haiku-nav categories=\"categories\" visible=\"navVisible\"></haiku-nav>\n" +
     "    </div>\n" +
     "    <div ng-hide=\"UIReady\" class=\"haiku-loading\">\n" +
-    "      <div class=\"haiku-loading__label\">Loading...</div>\n" +
+    "      <div class=\"haiku-loading__label\">L<span class=\"haiku-loading__spinner\"></span>ading...</div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>");
@@ -207,6 +207,7 @@ angular.module("head.html", []).run(["$templateCache", function($templateCache) 
     "  <meta name=\"author\" content=\"Rafał Pastuszak &lt;rafal@paprikka.pl&gt;\"/>\n" +
     "  <meta name=\"robots\" content=\"noindex\"/>\n" +
     "  <title>Haikµ</title>\n" +
+    "  <link rel=\"apple-touch-icon\" href=\"AppIcon76x76@2x.png\"/>\n" +
     "  <link rel=\"stylesheet\" href=\"css/app.css\"/>\n" +
     "  <script>\n" +
     "    (function() {\n" +
@@ -255,6 +256,7 @@ angular.module("index.html", []).run(["$templateCache", function($templateCache)
     "    <meta name=\"author\" content=\"Rafał Pastuszak &lt;rafal@paprikka.pl&gt;\">\n" +
     "    <meta name=\"robots\" content=\"noindex\">\n" +
     "    <title>Haikµ</title>\n" +
+    "    <link rel=\"apple-touch-icon\" href=\"AppIcon76x76@2x.png\">\n" +
     "    <link rel=\"stylesheet\" href=\"css/app.css\">\n" +
     "    <script>\n" +
     "      (function() {\n" +
