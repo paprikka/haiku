@@ -849,21 +849,28 @@ angular.module('pl.paprikka.haiku.services.importer', ['pl.paprikka.services.mar
         }
       ];
       return _.each(images, function(img) {
-        var imgEl;
-        imgEl = new Image;
-        imgEl.onload = function() {
-          return Resizer.resize(imgEl).then(function(resized) {
-            var slide;
-            slide = {
-              background: 'url(' + resized.img + ')'
-            };
-            categories[0].slides.push(slide);
-            if (categories[0].slides.length === images.length) {
-              return deferred.resolve(indexSlides(categories));
-            }
-          });
+        var createSlide, imgEl;
+        createSlide = function(imgUrl) {
+          var slide;
+          slide = {
+            background: 'url(' + imgUrl + ')'
+          };
+          categories[0].slides.push(slide);
+          if (categories[0].slides.length === images.length) {
+            return deferred.resolve(indexSlides(categories));
+          }
         };
-        return imgEl.src = img;
+        if (img.match(/image\/svg/gi)) {
+          return createSlide(img);
+        } else {
+          imgEl = new Image;
+          imgEl.onload = function() {
+            return Resizer.resize(imgEl).then(function(resized) {
+              return createSlide(resized.img);
+            });
+          };
+          return imgEl.src = img;
+        }
       });
     };
     return Importer;

@@ -955,18 +955,22 @@ angular.module('pl.paprikka.haiku.services.importer', [
     Importer.getFromImages = (images, deferred) ->
       categories = [ {slides: []} ]
       _.each images, (img) ->
+        createSlide = (imgUrl)->
+          slide =
+            background: 'url(' + imgUrl + ')'
+          categories[0].slides.push slide
 
-        imgEl = new Image
-        imgEl.onload = ->
-          Resizer.resize(imgEl).then (resized) ->
-            slide =
-              background: 'url(' + resized.img + ')'
-            categories[0].slides.push slide
-            if categories[0].slides.length is images.length
-              
-              deferred.resolve indexSlides categories
+          if categories[0].slides.length is images.length
+            deferred.resolve indexSlides categories
 
-        imgEl.src = img
+        if img.match /image\/svg/gi
+          createSlide img
+        else
+          imgEl = new Image
+          imgEl.onload = ->
+            Resizer.resize(imgEl).then (resized) ->
+              createSlide resized.img
+          imgEl.src = img
 
 
       
