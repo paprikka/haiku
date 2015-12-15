@@ -233,19 +233,10 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
           return scope.handleUpload(dt);
         };
         getFileType = function(fileDesc) {
-          var ext, regex, _ref;
-          regex = /(\.[^.]+)$/i;
-          ext = (_ref = fileDesc.name.match(regex)) != null ? _ref[0] : void 0;
-          if (fileDesc.type === '') {
-            switch (ext) {
-              case '.md':
-                return 'text';
-              case '.txt':
-                return 'text';
-            }
-          } else if (fileDesc.type.split('/')[0] === 'image') {
-            return 'images';
-          }
+          
+          var type = (fileDesc.name.split('/') || [])[0];
+          if (type === 'image') return 'images';
+          return type;
         };
         getTextFiles = function(fileRef, cb) {
           var reader;
