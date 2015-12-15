@@ -9286,3 +9286,7 @@ body {
   font-size: 12px;
   color: white;
 }
+
+.haiku__share-btn, .haiku__loading-btn, .haiku__remote-btn, .haiku__close-btn {
+  animation: none !important;;
+}
