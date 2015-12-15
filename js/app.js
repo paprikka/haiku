@@ -234,7 +234,7 @@ angular.module('pl.paprikka.directives.drop', []).directive('ppkDrop', [
         };
         getFileType = function(fileDesc) {
           
-          var type = (fileDesc.name.split('/') || [])[0];
+          var type = (fileDesc.type.split('/') || [])[0];
           if (type === 'image') return 'images';
           return type;
         };
